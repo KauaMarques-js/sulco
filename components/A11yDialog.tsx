@@ -8,7 +8,7 @@ type B = Exclude<keyof Prefs, "size">;
 
 // <dialog>.showModal(): keeps focus inside, closes with Esc and restores focus to the opener.
 export default function A11yDialog() {
-  const { d, lang, setLang, prefs, setPrefs, a11yOpen, setA11yOpen } = useApp();
+  const { d, lang, prefs, setPrefs, a11yOpen, setA11yOpen } = useApp();
   const ref = useRef<HTMLDialogElement>(null);
 
   useEffect(() => {
@@ -22,9 +22,9 @@ export default function A11yDialog() {
     <div className="swrow" key={k}>
       <div>
         <div id={`sw-${k}`} className="swl">{label}</div>
-        <p className="swh">{help}</p>
+        <p id={`help-${k}`} className="swh">{help}</p>
       </div>
-      <button role="switch" aria-checked={prefs[k]} aria-labelledby={`sw-${k}`} className="switch" onClick={() => setPrefs({ ...prefs, [k]: !prefs[k] })}>
+      <button role="switch" aria-checked={prefs[k]} aria-labelledby={`sw-${k}`} aria-describedby={`help-${k}`} className="switch" onClick={() => setPrefs({ ...prefs, [k]: !prefs[k] })}>
         {prefs[k] ? d.on : d.off}
       </button>
     </div>
@@ -32,7 +32,7 @@ export default function A11yDialog() {
   const info = (t: string) => <p className="swh" style={{ padding: ".6rem 0", display: "flex", gap: ".5rem" }}><Icon name="info" size={15} /> <span>{t}</span></p>;
 
   return (
-    <dialog ref={ref} className="dlg" aria-labelledby="a11y-t" onClose={() => setA11yOpen(false)} onClick={(e) => { if (e.target === ref.current) setA11yOpen(false); }}>
+    <dialog ref={ref} className="dlg" aria-describedby="a11y-intro" aria-labelledby="a11y-t" onClose={() => setA11yOpen(false)} onClick={(e) => { if (e.target === ref.current) setA11yOpen(false); }}>
       <div className="dlgin">
         <div className="row" style={{ justifyContent: "space-between", alignItems: "flex-start", marginBottom: "1rem" }}>
           <div>
@@ -41,7 +41,7 @@ export default function A11yDialog() {
           </div>
           <button className="icon-btn" onClick={() => setA11yOpen(false)} aria-label={d.done}><Icon name="close" size={18} /></button>
         </div>
-        <p style={{ fontSize: ".92rem" }}>{d.a11yIntro}</p>
+        <p id="a11y-intro" style={{ fontSize: ".92rem" }}>{d.a11yIntro}</p>
 
         <h3>{d.catVision}</h3>
         <div className="swrow">
@@ -61,10 +61,8 @@ export default function A11yDialog() {
         {sw("visual", d.swVis, d.swVisH)}
         {sw("captions", d.swCap, d.swCapH)}
         {info(d.infoVis)}
-        {lang === "pt-BR" ? sw("vlibras", d.swVl, d.swVlH) : <>
-          <p className="swh" style={{ padding: ".5rem 0" }}>{d.vlEn}</p>
-          <button onClick={() => setLang("pt-BR")}>{d.switchPt}</button>
-        </>}
+        {lang === "pt-BR" ? sw("vlibras", "Libras · VLibras", "Traduz textos em português para Libras. Tradução automática complementar; não substitui intérprete humano.") : process.env.NEXT_PUBLIC_HANDTALK_TOKEN ? sw("asl", "American Sign Language · Hand Talk", "Translate English text into ASL. Automatic translation is complementary and does not replace a human interpreter.") : <p className="swh">ASL translation via Hand Talk requires activation for this website. Captions, transcripts and visual information are available without it.</p>}
+
 
         <h3>{d.catNav}</h3>
         {sw("targets", d.swTarg, d.swTargH)}

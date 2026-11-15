@@ -1,11 +1,13 @@
 "use client";
 import { useEffect, useRef, useState } from "react";
+import { useApp } from "./AppProvider";
 import { Player } from "../lib/audio/player";
 import { AudioEngine } from "../lib/audio/engine";
 
 type CB<T> = { note: (it: T, speed: number, e: AudioEngine) => void; step?: (it: T, k: number) => void; end?: () => void };
 /** Player + áudio + onda/espectro em tempo real. Callbacks lidos via ref (sem closures velhas). */
 export function usePlayback<T>(items: T[], cb: CB<T>) {
+  const { prefs } = useApp();
   const [idx, setIdx] = useState(0), [playing, setPlaying] = useState(false), [speed, setSpeed] = useState(0.5), [vol, setVol] = useState(40);
   const P = useRef<Player | null>(null), E = useRef<AudioEngine | null>(null), itemsRef = useRef(items), cbRef = useRef(cb), cv = useRef<HTMLCanvasElement>(null);
   cbRef.current = cb;
@@ -21,7 +23,7 @@ export function usePlayback<T>(items: T[], cb: CB<T>) {
   useEffect(() => { P.current?.setSpeed(speed); }, [speed]);
   useEffect(() => { E.current?.setVolume(vol / 100); }, [vol]);
   useEffect(() => {
-    const c = cv.current; if (!c) return; const g = c.getContext("2d")!; g.clearRect(0, 0, c.width, c.height); if (!playing) return; let id = 0;
+    const c = cv.current; if (!c) return; const g = c.getContext("2d")!; g.clearRect(0, 0, c.width, c.height); if (!playing || prefs.rm || window.matchMedia("(prefers-reduced-motion: reduce)").matches) return; let id = 0;
     const loop = () => {
       const a = E.current?.analyser;
       if (a) {
@@ -33,7 +35,7 @@ export function usePlayback<T>(items: T[], cb: CB<T>) {
       id = requestAnimationFrame(loop);
     };
     loop(); return () => cancelAnimationFrame(id);
-  }, [playing]);
+  }, [playing, prefs.rm]);
   const ensure = async () => { if (!E.current) E.current = new AudioEngine(); await E.current.resume(); E.current.setVolume(vol / 100); };
   return {
     idx, setIdx, playing, speed, setSpeed, vol, setVol, cv,
