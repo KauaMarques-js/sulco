@@ -1,0 +1,5 @@
+Esta pasta recebe os dados locais do GISTEMP (funcionam sem internet).
+Rode: npm.cmd run update-data
+Se o download falhar: baixe https://data.giss.nasa.gov/gistemp/tabledata_v4/GLB.Ts+dSST.csv no navegador e rode
+npm.cmd run update-data -- --from-file "C:\caminho\GLB.Ts+dSST.csv"
+Enquanto esta pasta não tiver gistemp_monthly.csv, o site busca direto na NASA (precisa de internet).
