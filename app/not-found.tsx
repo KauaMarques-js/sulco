@@ -8,7 +8,7 @@ export default function NotFound() {
       <p className="lead">This groove does not exist. / Esse sulco não existe.</p>
       <div className="row" style={{ marginTop: "1.5rem" }}>
         <Link className="btn pri" href="/">SULCO</Link>
-        <Link className="btn ghost" href="/experiences">Experiences / Experiências</Link>
+        <Link className="btn ghost" href="/experiences">Experiences</Link>
       </div>
     </div>
   );

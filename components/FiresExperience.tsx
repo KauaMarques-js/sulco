@@ -1,6 +1,6 @@
 "use client";
 import Link from "next/link";
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { rolling, type Day } from "../lib/firms";
 import { numFmt } from "../lib/format";
 import { useApp } from "./AppProvider";
@@ -8,13 +8,15 @@ import { usePlayback } from "./usePlayback";
 import { FiresControls, useFires } from "./FiresControls";
 import FiresChart from "./FiresChart";
 import Det from "./Det";
+import PlayerTransport from "./PlayerTransport";
+import FireMap from "./FireMap";
 import { Icon } from "./Icons";
 
 type Item = Day & { f: number; pulses: number };
 
 export default function FiresExperience() {
   const { lang, d, prefs } = useApp();
-  const f = useFires();
+  const f = useFires(true);
   const [roll, setRoll] = useState(true), [live, setLive] = useState(""), [tr, setTr] = useState<string[]>([]);
   const nf = (v: number, n = 1) => numFmt(lang, 0, n).format(v);
 
@@ -31,12 +33,18 @@ export default function FiresExperience() {
     note: (x, sp, e) => { const step = 0.15 / sp; for (let i = 0; i < x.pulses; i++) e.note(x.f, 0.05 / sp, (i * step) / x.pulses); },
     step: (x) => { setTr((t) => [...t.slice(-99), evt(x)]); if (prefs.verbose) setLive(evt(x)); },
     end: () => setLive(d.ended),
-  });
+  }, prefs.rm);
+
+  useEffect(() => { setTr([]); }, [items]);
 
   const cur = items[Math.min(pb.idx, items.length - 1)];
   const peak = items.reduce((a, x) => (x.count > a.count ? x : a), items[0] ?? ({ date: "", count: 0 } as Item));
-  const desc = items.length ? d.fDesc(items[0].date, items[items.length - 1].date, items.reduce((s, x) => s + x.count, 0), peak.date, peak.count) : "";
+  const desc = items.length ? (roll
+    ? (lang === "pt-BR" ? `Janelas móveis de 5 dias terminando entre ${items[0].date} e ${items[items.length - 1].date}. Total de detecções no período consultado: ${f.data?.detections ?? 0}. Maior janela: ${peak.count}, terminando em ${peak.date}.` : `Rolling 5-day windows ending between ${items[0].date} and ${items[items.length - 1].date}. Total detections in the queried period: ${f.data?.detections ?? 0}. Largest window: ${peak.count}, ending ${peak.date}.`)
+    : d.fDesc(items[0].date, items[items.length - 1].date, f.data?.detections ?? 0, peak.date, peak.count)) : "";
 
+  const mapFrom = cur ? (roll ? new Date(Date.parse(cur.date + "T00:00:00Z") - 4 * 864e5).toISOString().slice(0, 10) : cur.date) : "";
+  const mapCount = f.data?.days.filter((x) => x.date >= mapFrom && x.date <= (cur?.date ?? "")).reduce((sum, x) => sum + x.count, 0) ?? 0;
   return (
     <article>
       <Link className="back" href="/experiences">← {d.back}</Link>
@@ -44,7 +52,8 @@ export default function FiresExperience() {
       <h1>{d.expTitles.wildfires}</h1>
       <p className="lead">{d.fIntro}</p>
 
-      <section className="card" aria-labelledby="f1">
+
+      <section id="experience-studio" className="card studio-filters" aria-labelledby="f1">
         <div className="section-head" style={{ marginBottom: "1rem" }}>
           <div><p className="eyebrow">{d.s2}</p><h2 id="f1" style={{ margin: 0 }}>{d.s2}</h2></div>
         </div>
@@ -52,7 +61,7 @@ export default function FiresExperience() {
         <label className="row" style={{ marginTop: "1rem", textTransform: "none", letterSpacing: 0, fontSize: ".9rem", color: "var(--tx-soft)" }}>
           <input type="checkbox" checked={roll} onChange={(e) => setRoll(e.target.checked)} /> {d.fRoll}
         </label>
-        {f.err?.missingKey && <p className="warn" role="alert">{d.fNeedKey}</p>}
+        {f.err?.missingKey && <div className="setup-notice" role="alert"><Icon name="flame" size={26} /><div><h3>{lang === "pt-BR" ? "Conecte sua chave NASA FIRMS" : "Connect your NASA FIRMS key"}</h3><p>{d.fNeedKey}</p><a className="btn" href="https://firms.modaps.eosdis.nasa.gov/api/map_key/" target="_blank" rel="noopener noreferrer">{lang === "pt-BR" ? "Obter chave gratuita" : "Get a free key"} ↗</a></div></div>}
         {f.err && !f.err.missingKey && <p className="warn" role="alert">{d.failData}{f.err.detail && process.env.NODE_ENV !== "production" ? ` (${f.err.detail})` : ""}</p>}
         {f.data && <div className="pill-row" style={{ marginTop: "1rem" }}>
           <span className="chip">{d.fCollected}: {new Date(f.data.collectedAt).toLocaleString(lang)}</span>
@@ -62,6 +71,7 @@ export default function FiresExperience() {
         {f.data && !items.length && <p>{d.fNoData}</p>}
       </section>
 
+      {!f.data && !f.loading && !f.err && <div className="studio-empty"><Icon name="sound" size={32} /><h2>{lang === "pt-BR" ? "Sua próxima escuta começa aqui" : "Your next listening session starts here"}</h2><p>{lang === "pt-BR" ? "Escolha uma região, os satélites e o período acima. Depois, carregue os dados para explorar o som dos registros." : "Choose a region, satellites and a period above. Then load the data to explore the sound of the records."}</p></div>}
       {items.length > 0 && cur && <>
         <section className="card" aria-labelledby="f2">
           <h2 id="f2" className="sr">{d.s3}</h2>
@@ -76,25 +86,14 @@ export default function FiresExperience() {
                   <span className="chip cool">{nf(cur.f)} {d.hz}</span>
                 </div>
               </div>
-              <div className="player-controls">
-                {pb.playing
-                  ? <button className="pri" onClick={pb.pause}><Icon name="pause" size={16} /> {d.pause}</button>
-                  : <button className="pri" onClick={() => pb.play()}><Icon name="play" size={16} /> {pb.paused() ? d.resume : d.play}</button>}
-                <button className="icon-btn" onClick={() => { pb.stop(); setTr([]); }} aria-label={d.stop} title={d.stop}><Icon name="stop" size={16} /></button>
-                <button className="icon-btn" onClick={() => { setTr([]); pb.restart(); }} aria-label={d.restart} title={d.restart}><Icon name="restart" size={16} /></button>
-                <label>{d.sonSpeed}
-                  <select value={pb.speed} onChange={(e) => pb.setSpeed(+e.target.value)}>{[0.5, 0.75, 1, 1.5, 2].map((s) => <option key={s} value={s}>{s}x</option>)}</select>
-                </label>
-                <label className="vol" style={{ flex: 1 }}>{d.volume}
-                  <input type="range" min={0} max={100} value={pb.vol} onChange={(e) => pb.setVol(+e.target.value)} aria-valuetext={`${pb.vol}%`} />
-                </label>
-              </div>
-            </div>
+          </div>
+          <PlayerTransport pb={pb} count={items.length} current={cur.date} onReset={() => setTr([])} />
             <p className="sr" role="status" aria-live="polite">{live}</p>
-            <progress value={pb.idx + 1} max={items.length} aria-label={d.now} />
             <p className="player-note">{d.noAudio}</p>
 
-            <FiresChart days={items} idx={pb.idx} desc={desc} />
+            <FiresChart days={items} idx={pb.idx} desc={desc} onSelect={(i) => pb.seek(i)} />
+            <p className="query-source">{lang === "pt-BR" ? "Clique em um dia no gráfico para mudar a seleção." : "Select a day in the chart to change the selection."}</p>
+            {f.data?.points && <FireMap points={f.data.points} from={mapFrom} to={cur.date} total={mapCount} scope={`${f.data.area}-${f.data.collectedAt}`} />}
             <p className="mut" style={{ fontSize: ".8rem", margin: 0 }}>{desc}</p>
 
             <div>

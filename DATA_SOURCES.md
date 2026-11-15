@@ -20,40 +20,39 @@ A relação de cada visualização com o NASA Earth Information Center (EIC) vem
 | Limitações | Média global esconde diferenças regionais; meses ausentes (`***`) são ignorados, nunca preenchidos |
 | Sonificação (escolha do SULCO) | 1 mês = 1 nota senoidal; frequência = 440 × 2^(anomalia/4) Hz; 0 °C = 440 Hz. Não é relação física |
 
-## 2. Wildfires — DISPONÍVEL
+## 2. Wildfires — EM VALIDAÇÃO
 | Campo | Valor |
 |---|---|
 | Visualização NASA / ID SVS | Active Fires (VIIRS), SVS 5113 |
-| Relação com o EIC | Verificada na API do NASA SVS: SVS 5113 (`Earth Information Center` nas palavras-chave) e SVS 40531 (`Wildland Fires Dashboard`) |
+| Relação com o EIC | Não verificado |
 | Dataset original | NASA FIRMS, produtos VIIRS_SNPP_NRT e VIIRS_NOAA21_NRT |
 | URL | https://firms.modaps.eosdis.nasa.gov/ · https://firms.modaps.eosdis.nasa.gov/api/ |
 | Variável / unidade | Detecções e FRP (potência radiativa do fogo), MW |
 | Período | Dias recentes (near real time) |
-| Atualização | Diária (validado na API FIRMS até a data corrente) |
+| Atualização | Diária (segundo o briefing; confirmar na documentação do FIRMS) |
 | Acesso | API de área, só no servidor (`/api/nasa/fires`), janelas de até 5 dias por requisição |
 | Chave de API | **Sim**: MAP_KEY gratuita em `FIRMS_MAP_KEY` (ver `.env.example`). Nunca no navegador |
 | Data de obtenção | Registrada em cada resposta (`collectedAt`) e versão do dado (`versions`) |
-| Limitações | Área é um retângulo (não divisa de estado); contagem de detecções não mede tamanho nem intensidade; dias sem detecção não são preenchidos; em validação de 2026-11-15, `VIIRS_SNPP_NRT` não retornou registros após 2026-11-02 (enquanto `VIIRS_NOAA21_NRT` e `SNPP + NOAA-21` retornaram normalmente) |
-| Janela temporal | Opção de janela móvel de 5 dias, alinhada à descrição da visualização SVS 5113 |
+| Limitações | Área é um retângulo (não divisa de estado); contagem de detecções não mede tamanho nem intensidade; dias sem detecção não são preenchidos; a disponibilidade temporal é consultada antes da carga inicial |
+| Janela temporal | Opção de janela móvel de 5 dias, para se aproximar da visualização 5113 (conferir) |
 | Sonificação (escolha do SULCO) | 1 dia = 1 passo; altura (220–880 Hz, escala log no período) = FRP médio; nº de pulsos (1–6) = nº de detecções |
-| Validação | Testado em 2026-11-15 via `/api/nasa/fires` com `FIRMS_MAP_KEY` real nas áreas `mt`, `br` e `world` |
+| Para validar | Com a chave, comparar contagens e datas com a visualização 5113 e com o site do FIRMS antes de marcar como Available |
 
-## 3. Oceans — DISPONÍVEL
-| Campo | Valor |
-|---|---|
-| Visualização NASA / ID SVS | Sea Surface Temperature (SST) - Near Real Time, SVS 5101 |
-| Relação com o EIC | Verificada na API do NASA SVS 5101 (`Earth Information Center` nas palavras-chave; cita MUR SST / JPL PO DAAC) |
-| Dataset numérico | NOAA NESDIS CoastWatch ERDDAP — Geo-Polar Blended Sea Surface Temperature 5 km NRT (`noaacwBLENDEDCsstDaily`, `analysed_sst`) |
-| URL | https://coastwatch.noaa.gov/erddap/griddap/noaacwBLENDEDCsstDaily.html · https://svs.gsfc.nasa.gov/5101/ |
-| Variável / unidade | Temperatura da superfície do mar (TSM / SST), °C |
-| Período | Últimos 7, 15 ou 30 dias até o `time_coverage_end` mais recente do servidor (cobertura histórica desde 2002-09-01) |
-| Atualização | Diária |
-| Acesso | CSV público do ERDDAP, consultado no servidor (`/api/nasa/oceans`), em 5 recortes espaciais (`global`, `br`, `nino34`, `natlan`, `indian`) |
-| Chave de API | Não |
-| Data de obtenção | Registrada em cada resposta (`collectedAt`) e na janela `start → end` |
-| Limitações | Limites geográficos retangulares; amostragem em grade uniforme espaçada (2°–30° dependendo da bacia) para garantir resposta confiável em 30 dias; células continentais/gelo (`NaN`) são ignoradas sem interpolação |
-| Sonificação (escolha do SULCO) | 1 dia = 1 nota senoidal suave entre 220 Hz e 880 Hz (2 oitavas), escalada exponencialmente do mínimo ao máximo da TSM média diária do recorte ativo. Escolha artística, não é lei física |
+## 3. Oceans — NÃO DISPONÍVEL
+SVS 5101 (Sea Surface Temperature, near real time). Dataset, acesso numérico, unidade, resolução e correspondência com a visualização **ainda não identificados**. Não há página nem sonificação. Só marcar Available depois de cumprir os itens do briefing.
 
 ## Observações
 - SVS API fornece metadados e links de mídia, não os dados numéricos. GIBS fornece imagens/mapas, não dados para sonificação. Não são misturados.
-- Os IDs 40529, 40531, 40477 e 40479 aparecem como referência em Discover Earth (dos quais 40531 / 5113 para Incêndios e 5101 para Oceanos já estão verificados).
+- Referências ainda não verificadas não são apresentadas como experiências prontas.
+
+## Consultas e disponibilidade
+
+A página Descobrir Terra foi retirada a pedido do usuário. `/discover` redireciona para `/experiences`; a integração EONET/EPIC não faz mais parte do produto.
+
+`GET /api/nasa/fires/availability` consulta o endpoint oficial `data_availability/csv/[MAP_KEY]/ALL`, filtrando os produtos VIIRS SNPP e NOAA-21. A interface usa a data mais recente comum aos satélites selecionados quando o usuário não informa outra data, e exibe essa data antes da consulta. A disponibilidade pode estar atrasada em relação ao calendário. Documentação: https://firms.modaps.eosdis.nasa.gov/api/data_availability
+
+O mapa usa OpenStreetMap como base e coordenadas FIRMS como detecções. Até 2.000 pontos são amostrados, distribuídos pelos dias do intervalo; o limite e a quantidade exibida são informados na tela. Agregações e sonificação usam todos os registros válidos. Na janela móvel, o mapa mostra as detecções do dia selecionado e dos quatro dias anteriores, restritas ao período consultado. Os pontos não representam perímetros ou número de incêndios únicos.
+
+`GET /api/nasa/gistemp` agora consulta a NASA automaticamente e retorna JSON. A fonte original continua sendo a tabela CSV oficial, obtida por HTTP; o navegador não precisa importar arquivos. Se a NASA falhar, a resposta identifica `origin: local` e `fallback: true`, com data original da cópia. `?source=remote` exige consulta remota sem cache e falha explicitamente quando indisponível; `?source=local` usa a cópia local.
+
+A API oficial FIRMS também entrega CSV por HTTP, convertido pelo servidor em JSON. A MAP_KEY gratuita permanece obrigatória e exclusiva do servidor. Documentação dos intervalos de 1–5 dias: https://firms.modaps.eosdis.nasa.gov/api/area

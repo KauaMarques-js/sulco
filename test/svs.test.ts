@@ -1,0 +1,15 @@
+import assert from "node:assert/strict";
+import { normalizeSvs, metadataText, descriptionText } from "../lib/nasa/svs.ts";
+const description = "The NASA climate spiral 1880-2022. This version is in Celsius. || GISTEMP_Spiral_60sec_C.01400_print.jpg (1024x1024) [283.8 KB] || GISTEMP_Spiral_30sec_C.mp4 (2160x2160) [20.3 MB] || C (2160x2160) [0 Item(s)] ||";
+const credits = [{ role: "Visualizer", people: [{ name: "Mark SubbaRao", employer: "NASA/GSFC" }, { name: "Ed Hawkins", employer: "University of Reading" }] }, { role: "Technical support", people: [{ name: "Laurence Schuler", employer: "ADNET Systems, Inc." }] }];
+const result = normalizeSvs({ title: "NASA Climate Spiral", description, credits, main_video: "https://svs.gsfc.nasa.gov/example.mp4" }, 5057);
+assert.equal(result.description, "The NASA climate spiral 1880-2022. This version is in Celsius.");
+assert.equal(result.creditGroups.length, 2); assert.equal(result.creditGroups[0].people.length, 2);
+assert.ok(result.credits?.includes("Mark SubbaRao (NASA/GSFC)")); assert.ok(!result.credits?.includes('"people"')); assert.ok(!result.description?.includes("||"));
+assert.equal(result.video, "https://svs.gsfc.nasa.gov/example.mp4");
+assert.equal(metadataText({ nested: "not prose" }), null);
+assert.equal(metadataText("A &amp; B&nbsp;&#233; &#x1f30d;"), "A & B é 🌍");
+assert.equal(descriptionText("<p>Scientific explanation.</p> || image.png (100x100) [1 KB] || More scientific prose."), "Scientific explanation.\n\nMore scientific prose.");
+assert.equal(normalizeSvs({ credits: [null, {role:"Unknown", people:[null,{}]}] }, 5190).credits, null);
+assert.equal(normalizeSvs({ credits: "NASA's Scientific Visualization Studio" }, 5190).credits, "NASA's Scientific Visualization Studio");
+console.log("OK SVS: prose without download inventory, structured credits, malformed metadata, entities, original media preserved");

@@ -5,7 +5,7 @@ import { dict, type Dict, type Lang } from "../lib/i18n";
 import { DEF, type Prefs } from "../lib/prefs";
 import type { Row } from "../lib/gistemp";
 
-export type Data = { origin?: "local" | "remote"; sha256?: string | null; rows: Row[]; source: string; dataset: string; units: string; baseline: string; fetchedAt: string; skippedMissing: number; missing?: { year: number; month: number }[]; firstYear: number; lastYear: number };
+export type Data = { origin?: "local" | "remote"; fallback?: boolean; sha256?: string | null; rows: Row[]; source: string; dataset: string; units: string; baseline: string; fetchedAt: string; skippedMissing: number; missing?: { year: number; month: number }[]; firstYear: number; lastYear: number };
 export type Fail = { source: string; detail?: string };
 type Ctx = { lang: Lang; setLang: (l: Lang) => void; d: Dict; prefs: Prefs; setPrefs: (p: Prefs) => void; a11yOpen: boolean; setA11yOpen: (o: boolean) => void; data: Data | null; dataErr: Fail | null; loadData: (remote?: boolean) => void };
 const C = createContext<Ctx | null>(null);

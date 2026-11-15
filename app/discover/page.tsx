@@ -1,2 +1,2 @@
-import { Discover } from "../../components/Pages";
-export default function Page() { return <Discover />; }
+import { redirect } from "next/navigation";
+export default function Page() { redirect("/experiences"); }

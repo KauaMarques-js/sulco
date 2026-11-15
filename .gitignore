@@ -23,4 +23,6 @@ Thumbs.db
 coverage/
 
 # Local credentials
+.env
 .env*.local
+.env.production

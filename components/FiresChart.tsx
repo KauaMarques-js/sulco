@@ -3,7 +3,7 @@ import { useMemo } from "react";
 type FireDay = { date: string; count: number; frpMean: number };
 
 /** Bars are memoised on `days`; only the highlighted bar changes during playback. */
-export default function FiresChart({ days, idx, desc }: { days: FireDay[]; idx?: number; desc: string }) {
+export default function FiresChart({ days, idx, desc, onSelect }: { days: FireDay[]; idx?: number; desc: string; onSelect?: (index: number) => void }) {
   const geo = useMemo(() => {
     if (!days.length) return null;
     const W = 1000, H = 300, M = { l: 48, r: 16, t: 24, b: 34 };
@@ -25,7 +25,7 @@ export default function FiresChart({ days, idx, desc }: { days: FireDay[]; idx?:
       rx: Math.min(3, barW / 2),
     }));
     const frp = days.map((x, i) => `${X(i) + bw / 2},${YF(x.frpMean)}`).join(" ");
-    return { W, H, M, ticks, YC, bars, frp };
+    return { W, H, M, ticks, YC, bars, frp, X, bw, base };
   }, [days]);
 
   if (!geo) return null;
@@ -33,7 +33,7 @@ export default function FiresChart({ days, idx, desc }: { days: FireDay[]; idx?:
 
   return (
     <div className="chart-wrap">
-      <svg viewBox={`0 0 ${geo.W} ${geo.H}`} role="img" aria-label={desc}>
+      <svg viewBox={`0 0 ${geo.W} ${geo.H}`} role={onSelect ? "group" : "img"} aria-label={desc}>
         <defs>
           <linearGradient id="fire-bars" x1="0" y1="0" x2="0" y2="1">
             <stop offset="0" stopColor="#7fe7ff" stopOpacity=".95" />
@@ -59,6 +59,8 @@ export default function FiresChart({ days, idx, desc }: { days: FireDay[]; idx?:
         {active && <rect x={active.x} width={active.w} y={active.y} height={active.h} rx={active.rx} fill="url(#fire-bars-hi)" />}
 
         <polyline fill="none" stroke="#f7b56b" strokeWidth="2.4" strokeDasharray="7 5" strokeLinecap="round" points={geo.frp} />
+
+        {onSelect && days.map((day, i) => <rect key={`select-${day.date}`} x={geo.X(i)} y={geo.M.t} width={geo.bw} height={geo.base - geo.M.t} fill="transparent" role="button" tabIndex={0} aria-label={`${day.date} · ${day.count} · ${day.frpMean.toFixed(1)} MW`} onClick={() => onSelect(i)} onKeyDown={(e) => { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); onSelect(i); } }} style={{ cursor: "pointer" }} />)}
 
         <text x={geo.M.l} y={geo.H - 8} fill="#6b7690" fontSize="11" fontFamily="ui-monospace, monospace">{days[0].date}</text>
         <text x={geo.W - geo.M.r} y={geo.H - 8} textAnchor="end" fill="#6b7690" fontSize="11" fontFamily="ui-monospace, monospace">{days[days.length - 1].date}</text>

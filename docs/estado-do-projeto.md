@@ -1,0 +1,40 @@
+# Estado do SULCO
+
+Branch: `feat/nasa-discover-earth`. Publicação na main autorizada pelo usuário após revisão na branch de trabalho. Orientações de engenharia consultadas no plugin do usuário: https://github.com/KauaMarques-js/plugin-CODEX (commit `851633f3bcfe3708fde3d632069f082f8bdc462e`).
+
+## Pedidos e decisões atuais
+
+- Trabalhar na branch de funcionalidade e publicar mudanças para revisão antes de qualquer merge na main.
+- Usar dados reais e deixar a interface mais direta e dinâmica.
+- Retirar Descobrir Terra: somente Experiências reúne as ferramentas. `/discover` redireciona; navegação, categorias sem ferramenta e integrações EONET/EPIC foram removidas.
+- Integrar primeiro `origin/api-key-map`: pull realizado com merge `ce0ca23`, preservando o trabalho em andamento. A branch trouxe configuração de ambiente, não um dataset numérico. Credenciais permanecem em arquivos locais ignorados pelo Git; o exemplo versionado tem valor vazio. A chave que já constava no histórico da outra branch precisa ser substituída pelo responsável.
+
+## Funcionamento
+
+- Clima: NASA GISS GISTEMP v4 consultado por HTTP, com reserva local identificada. A variante atual SVS 5190 permite toda a série disponível; a variante 5057 continua limitada a 2022. Seleção por período, gráfico e linha do tempo controla o mesmo registro e sua nota. O catálogo mostra o gráfico dos dados carregados.
+- Queimadas: NASA FIRMS autenticado no servidor. `/api/nasa/fires/availability` informa as datas publicadas de SNPP e NOAA-21. Sem data manual, a interface consulta até a data mais recente comum aos produtos selecionados, apresentada na tela; não presume que a data do calendário tenha registros disponíveis.
+- Mapa: OpenStreetMap como base, coordenadas reais FIRMS. Mostra o dia selecionado ou sua janela móvel de cinco dias e informa o tamanho da amostra. Amostragem de até 2.000 pontos para o mapa; totais e sonificação usam todos os registros. Coordenadas acessíveis em tabela.
+- Gráficos permitem selecionar o registro sem iniciar áudio automaticamente. Animação de onda respeita movimento reduzido.
+
+## Limites
+
+Detecções não equivalem a número de incêndios únicos ou perímetros queimados. FRP é potência radiativa, em MW. Status científico e mapeamentos de sonificação foram preservados; validar correspondência com SVS 5113 segue pendente. A disponibilidade de dados da NASA pode estar atrasada em relação ao calendário.
+
+## Evidências
+
+- Testes automatizados de parser, player, seleção e APIs aprovados, incluindo disponibilidade, coordenadas inválidas, amostragem, sigilo da chave nas respostas e reserva local.
+- Checagem TypeScript e build de produção aprovados em cópia isolada.
+- Consulta autenticada real SNPP em Mato Grosso: 602 detecções e 602 coordenadas, de 2026-10-29 a 2026-11-02. A consulta anterior até 2026-11-15 havia retornado vazia; o endpoint de disponibilidade identificou a data publicada correta. Esses valores são evidência da sessão, não constantes do produto.
+- Chrome/Playwright, com APIs reais e sem mocks: 6.594 detecções na consulta inicial combinada de 2026-10-24 a 2026-11-02, amostra de 1.961 pontos no mapa, e 1.762 meses GISTEMP obtidos remotamente. Verificados redirecionamento de `/discover`, catálogo com duas experiências, disponibilidade, agregação, mapa e tiles, seleção por teclado/gráfico, áudio, layout móvel e ausência da chave em dados/requisições do cliente. Nenhum erro JavaScript de página observado.
+
+## Integração de desempenho e acessibilidade
+
+Integrada `api-key-map` até `993e92e` na branch de trabalho `feat/nasa-discover-earth`, preservando mapa, recorte temporal FIRMS e navegação simplificada. Inclui oceanos, cache/concorrência e recursos de acessibilidade. Conflitos resolvidos e JSON validado; servidor reiniciado com cache Next recriado após erro temporário durante o merge. `npm test` e build aprovados; páginas `/experiences`, `/experiences/oceans` e `/data` retornaram 200 no navegador, sem erros JavaScript de página. Entrega somente na branch de trabalho, sem alteração da main.
+
+## Metadados da Espiral Climática
+
+Corrigida a apresentação de metadados SVS: inventário de downloads separado por `||` é removido da descrição; créditos estruturados são normalizados para grupos de função/pessoas, com texto simples compatível com outros consumidores. Descrição original identificada como inglês para leitores de tela. Vídeos, dados e sonificação preservados. Teste `test:svs`, build de produção e reprodução do problema no navegador com o exemplo fornecido pelo usuário aprovados. Prévia local na porta 3001, com um servidor por cache Next.
+
+## Publicação na main
+
+A pedido do usuário, integrada a branch `feat/nasa-discover-earth` à main atualizada de `9733712`. Preservadas as otimizações de geometria dos gráficos, buffers e limite de 30 fps do player, junto com seleção por teclado e mouse, tratamento de falha de áudio e metadados SVS legíveis. `npm test`, build de produção e checagem no navegador da integração aprovados (clima, queimadas, oceanos, layout móvel e ausência de erros JavaScript de página).

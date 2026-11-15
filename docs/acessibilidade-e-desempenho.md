@@ -1,6 +1,6 @@
 # Base de trabalho e verificação
 
-A pedido do usuário, `api-key-map` passa a ser a base de trabalho. Atualizada integralmente de `origin/api-key-map`, a partir de `b665985`. Fontes, recortes, frequências e cálculos de clima/FIRMS/CoastWatch preservados.
+A branch `api-key-map` foi usada como base dos dados; a pedido posterior do usuário, o trabalho e a entrega ficam em `feat/nasa-discover-earth`. Atualizada integralmente de `origin/api-key-map`, a partir de `b665985`. Fontes, recortes, frequências e cálculos de clima/FIRMS/CoastWatch preservados.
 
 Skill consultada: https://github.com/nextlevelbuilder/ui-ux-pro-max-skill, `.claude/skills/ui-ux-pro-max/SKILL.md`. Aplicadas recomendações específicas para foco em modais e semântica/anúncios de leitores de tela; não foi aplicado um redesenho genérico.
 

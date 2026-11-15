@@ -6,7 +6,7 @@ import Badge from "./Badge";
 import HomePlayer from "./HomePlayer";
 import { Icon, type IconName } from "./Icons";
 import { CATALOG, type Exp } from "../lib/eic/catalog";
-import { CATS } from "../lib/eic/categories";
+import { useFires } from "./FiresControls";
 import type { Row } from "../lib/gistemp";
 
 const ICON: Record<string, IconName> = {
@@ -26,17 +26,18 @@ const DEVELOPERS = ["Arthur Loni", "Carlos Eduardo", "Kauan Marques", "Adrielly 
 
 const icon = (slug: string): IconName => ICON[slug] ?? "globe";
 
-function ExpTile({ e }: { e: Exp }) {
-  const { d } = useApp();
+function ExpTile({ e, studio = false, latest }: { e: Exp; studio?: boolean; latest?: string }) {
+  const { d, lang, data } = useApp();
   const open = HAS_PAGE.includes(e.slug);
   const body = (
     <>
-      <div className="viz">
-        <Icon name={icon(e.key)} size={44} />
-      </div>
+      {studio ? <div className={`experience-preview preview-${e.slug}`}>
+        {e.slug === "climate" && data ? <><MiniSeries rows={data.rows} /><p>{data.firstYear}–{data.lastYear} · NASA GISS</p></> : <div className="source-preview"><Icon name={icon(e.key)} size={28} /><span>{e.slug === "fires" ? "NASA FIRMS / VIIRS" : e.dataSource}</span>{e.slug === "fires" ? <><strong>{latest ?? "—"}</strong><p>{lang === "pt-BR" ? "Última data disponível" : "Latest available date"}</p></> : <p>{e.slug === "climate" ? d.loading : (lang === "pt-BR" ? "Temperatura da superfície do mar · °C" : "Sea surface temperature · °C")}</p>}</div>}
+      </div> : <div className="viz"><Icon name={icon(e.key)} size={44} /></div>}
       <Badge st={e.status} />
       <h3>{d.expTitles[e.key]}</h3>
       <p>{d.expDesc[e.key]}</p>
+      {studio && <div className="studio-card-meta"><span>{e.slug === "climate" ? (lang === "pt-BR" ? "1 mês = 1 nota" : "1 month = 1 note") : e.slug === "fires" ? (lang === "pt-BR" ? "1 dia = 1 passo" : "1 day = 1 step") : (lang === "pt-BR" ? "1 dia = 1 nota" : "1 day = 1 note")}</span><span>{e.apiKey ? (lang === "pt-BR" ? "Requer chave FIRMS" : "Requires FIRMS key") : e.slug === "climate" ? (lang === "pt-BR" ? "Sem chave de API" : "No API key needed") : "NOAA CoastWatch"}</span></div>}
       <div className="tile-foot">
         {open ? <>{d.openExp} <Icon name="arrow" size={16} /></> : <span className="mut">{d.stValidating}</span>}
       </div>
@@ -45,8 +46,8 @@ function ExpTile({ e }: { e: Exp }) {
   return (
     <li>
       {open
-        ? <Link className="card tile hoverable" href={`/experiences/${e.slug}`}>{body}</Link>
-        : <div className="card tile dim">{body}</div>}
+        ? <Link className={`card tile hoverable${studio ? " studio-card" : ""}`} href={`/experiences/${e.slug}`}>{body}</Link>
+        : <div className={`card tile dim${studio ? " studio-card" : ""}`}>{body}</div>}
     </li>
   );
 }
@@ -203,60 +204,18 @@ export function Home() {
   );
 }
 
-export function Discover() {
-  const { d } = useApp();
-  return (
-    <>
-      <p className="eyebrow">{d.navDiscover}</p>
-      <h1>{d.discoverTitle}</h1>
-      <p className="lead">{d.discoverIntro}</p>
-      <ul className="tiles" style={{ marginTop: "2rem" }}>
-        {CATS.map((c) => (
-          <li key={c.k}>
-            <div className={`card tile hoverable${c.st === "soon" ? " dim" : ""}`} style={{ padding: 0, overflow: "hidden" }}>
-              <div className="viz">
-                <Icon name={icon(c.k)} size={44} />
-              </div>
-              <div className="body" style={{ padding: "1.1rem 1.2rem 1.3rem", display: "flex", flexDirection: "column", height: "100%" }}>
-                <Badge st={c.st} />
-                <h3 style={{ margin: 0 }}>{d.cats[c.k]}</h3>
-                <p style={{ marginTop: ".45rem" }}>{d.catsDesc[c.k]}</p>
-                {c.href && (
-                  <div className="tile-foot">
-                    <Link href={c.href} style={{ display: "inline-flex", alignItems: "center", gap: ".4rem" }}>{d.openExp} <Icon name="arrow" size={15} /></Link>
-                  </div>
-                )}
-                {c.st !== "available" && (
-                  <details style={{ marginTop: c.href ? ".3rem" : "auto" }}>
-                    <summary>{d.learnMore}</summary>
-                    <p style={{ fontSize: ".85rem", margin: 0 }}>{c.st === "validation" ? d.stValidMsg : d.stSoonMsg}</p>
-                    {c.ref && <p style={{ fontSize: ".8rem", margin: ".5rem 0 0" }}>{d.svsRef}: <a href={`https://svs.gsfc.nasa.gov/${c.ref}/`} target="_blank" rel="noopener">SVS {c.ref}</a></p>}
-                  </details>
-                )}
-              </div>
-            </div>
-          </li>
-        ))}
-      </ul>
-    </>
-  );
-}
-
 export function Experiences() {
-  const { d } = useApp();
+  const { d, lang } = useApp();
+  const pt = lang === "pt-BR";
+  const fires = useFires();
   return (
     <>
       <p className="eyebrow">{d.navExp}</p>
       <h1>{d.expTitle}</h1>
       <p className="lead">{d.expSub}</p>
-      <ul className="tiles" style={{ marginTop: "2rem" }}>{CATALOG.map((e) => <ExpTile key={e.slug} e={e} />)}</ul>
-      <div className="card" style={{ marginTop: "2rem" }}>
-        <div className="note-grid">
-          <div className="note"><h3>{d.officialViz}</h3><p>NASA SVS 5057 · 5190 · 5113</p></div>
-          <div className="note"><h3>{d.tData}</h3><p>NASA GISS · GISTEMP v4 · NASA FIRMS</p></div>
-          <div className="note"><h3>{d.how}</h3><p>{d.speedNote}</p></div>
-        </div>
-      </div>
+      <ul className="tiles studio-catalog">{CATALOG.filter((e) => HAS_PAGE.includes(e.slug)).map((e) => <ExpTile key={e.slug} e={e} studio latest={fires.latest} />)}</ul>
+      <p className="catalog-note">{pt ? "Clima: anomalia mensal de temperatura. Queimadas: detecções de calor e potência radiativa. As fontes e datas aparecem em cada experiência." : "Climate: monthly temperature anomalies. Wildfires: heat detections and radiative power. Each experience shows its sources and dates."}</p>
+
     </>
   );
 }
