@@ -1,0 +1,32 @@
+{
+  "results": [
+    {
+      "name": "play-pause-resume-stop",
+      "passed": true
+    },
+    {
+      "name": "keyboard-modal-trap-escape-focus-return",
+      "passed": true
+    },
+    {
+      "name": "metadata-race-latest-selection-wins",
+      "passed": true,
+      "fixture": true
+    },
+    {
+      "name": "source-failure-alert-and-recovery",
+      "passed": true,
+      "fixture": true
+    },
+    {
+      "name": "320px-140percent-text-high-contrast-reduced-motion",
+      "passed": true,
+      "violations": []
+    },
+    {
+      "name": "english-climate-controls-and-document-language",
+      "passed": true
+    }
+  ],
+  "errors": []
+}

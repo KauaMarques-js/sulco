@@ -1,5 +1,6 @@
 import assert from "node:assert/strict";
 import { GET as fires } from "../app/api/nasa/fires/route.ts";
+import { GET as oceans } from "../app/api/nasa/oceans/route.ts";
 import { GET as climate } from "../app/api/nasa/gistemp/route.ts";
 import { GET as availability } from "../app/api/nasa/fires/availability/route.ts";
 import { parseAvailability } from "../lib/nasa/firms-availability.ts";
@@ -18,6 +19,11 @@ const originalKey = process.env.FIRMS_MAP_KEY;
 const csv = "Year,Jan,Feb,Mar,Apr,May,Jun,Jul,Aug,Sep,Oct,Nov,Dec\n2026,1,1,1,1,1,1,1,1,1,1,***,***";
 try {
   let r: Response; let d;
+  globalThis.fetch = async () => { throw new Error("Invalid parameters must not query upstream"); };
+  for (const query of ["basin=constructor", "basin=__proto__", "basin=toString", "days=2.5", "days=400"]) {
+    assert.equal((await oceans(new Request("http://localhost/api/nasa/oceans?" + query))).status, 400);
+  }
+
   delete process.env.FIRMS_MAP_KEY;
   r = await availability(); assert.equal(r.status, 503);
   process.env.FIRMS_MAP_KEY = "synthetic-test-key";

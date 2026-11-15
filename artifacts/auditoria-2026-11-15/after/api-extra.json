@@ -1,0 +1,56 @@
+[
+  {
+    "name": "climate-local",
+    "status": 200,
+    "origin": "local",
+    "fallback": false,
+    "rows": 1762
+  },
+  {
+    "name": "climate-remote",
+    "status": 200,
+    "origin": "remote",
+    "fallback": false,
+    "rows": 1762
+  },
+  {
+    "name": "invalid-climate",
+    "status": 400
+  },
+  {
+    "name": "invalid-ocean",
+    "status": 400
+  },
+  {
+    "name": "invalid-fires",
+    "status": 400
+  },
+  {
+    "name": "invalid-svs",
+    "status": 400
+  },
+  {
+    "name": "blocked-proxy",
+    "status": 403
+  },
+  {
+    "name": "ocean-north-atlantic",
+    "status": 200,
+    "rows": 1757
+  },
+  {
+    "name": "ocean-indian",
+    "status": 200,
+    "rows": 840
+  },
+  {
+    "name": "nasa-image-proxy",
+    "status": 200,
+    "contentType": "image/jpeg",
+    "bytes": 100584
+  },
+  {
+    "name": "legacy-discover-redirect",
+    "status": 307
+  }
+]

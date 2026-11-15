@@ -35,12 +35,17 @@ export default function OceansExperience() {
   const [srLive, setSrLive] = useState("");
   const [pickIdx, setPickIdx] = useState(0);
   const vidRef = useRef<HTMLVideoElement>(null);
+  const metaRequest = useRef<AbortController | null>(null);
 
   const loadSvs = () => {
+    metaRequest.current?.abort();
+    const controller = new AbortController(); metaRequest.current = controller;
     setSvsErr(null);
-    getJson<SvsMeta>("/api/nasa/climate-spiral?id=5101").then(setSvs).catch(setSvsErr);
+    getJson<SvsMeta>("/api/nasa/climate-spiral?id=5101", { signal: controller.signal })
+      .then((value) => { if (!controller.signal.aborted) setSvs(value); })
+      .catch((error) => { if (!controller.signal.aborted) setSvsErr(error); });
   };
-  useEffect(() => { loadSvs(); }, []);
+  useEffect(() => { loadSvs(); return () => metaRequest.current?.abort(); }, []);
 
   useEffect(() => {
     if (vidRef.current) vidRef.current.playbackRate = vSpeed;

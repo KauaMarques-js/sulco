@@ -116,7 +116,7 @@ export default function DataExplorer() {
         {f.err?.missingKey && <p className="warn" role="alert">{d.fNeedKey}</p>}
         {f.err && !f.err.missingKey && <p className="warn" role="alert">{d.failData}</p>}
         {f.data && <div className="pill-row">
-          <span className="chip">{d.fCollected}: {new Date(f.data.collectedAt).toLocaleString(lang)}</span>
+          <span className="chip">{d.fCollected}: {new Date(f.data.sourceFetchedAt ?? f.data.collectedAt).toLocaleString(lang)}</span>
           <span className="chip">{f.data.products.join(", ")}</span>
           <span className="chip">{f.data.start} → {f.data.end}</span>
           <span className="chip warm">{f.data.detections.toLocaleString(lang)} {d.fCount.toLowerCase()}</span>

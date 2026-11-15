@@ -46,7 +46,7 @@ export function parseErddapSstCsv(text: string): { rows: OceanSample[]; skipped:
     const lat = Number(c[idx.la]);
     const lon = Number(c[idx.lo]);
     const sst = Number(c[idx.s]);
-    if (!/^\d{4}-\d{2}-\d{2}$/.test(date) || !Number.isFinite(lat) || !Number.isFinite(lon) || !Number.isFinite(sst) || sst < -2.5 || sst > 40) {
+    if ([idx.la, idx.lo, idx.s].some((i) => !(c[i] ?? "").trim()) || !/^\d{4}-\d{2}-\d{2}$/.test(date) || !Number.isFinite(Date.parse(date)) || new Date(date).toISOString().slice(0, 10) !== date || !Number.isFinite(lat) || Math.abs(lat) > 90 || !Number.isFinite(lon) || Math.abs(lon) > 180 || !Number.isFinite(sst) || sst < -2.5 || sst > 40) {
       skipped++;
       continue;
     }

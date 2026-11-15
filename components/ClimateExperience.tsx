@@ -25,13 +25,21 @@ export default function ClimateExperience() {
   const [y1, setY1] = useState(0), [y2, setY2] = useState(0), [live, setLive] = useState(""), [tr, setTr] = useState<string[]>([]), [vspeed, setVspeed] = useState(0.5);
   const [mediaErr, setMediaErr] = useState(false);
   const video = useRef<HTMLVideoElement>(null);
+  const metaRequest = useRef<AbortController | null>(null);
   // Intl.NumberFormat/Date reuse: criar um formatador por render (ou por nota) era caro.
   const numFmt = useMemo(() => new Intl.NumberFormat(lang, { minimumFractionDigits: 2, maximumFractionDigits: 2 }), [lang]);
   const monthNames = useMemo(() => Array.from({ length: 12 }, (_, i) => new Date(2000, i, 1).toLocaleString(lang, { month: "long" })), [lang]);
   const nf = (v: number) => numFmt.format(v);
   const mname = (m: number) => monthNames[m - 1];
-  const loadMeta = (id: number) => { setMetaErr(null); setMeta(null); setMediaErr(false); getJson<Meta>(`/api/nasa/climate-spiral?id=${id}`).then(setMeta).catch(setMetaErr); };
-  useEffect(() => { loadMeta(svsId); }, [svsId]);
+  const loadMeta = (id: number) => {
+    metaRequest.current?.abort();
+    const controller = new AbortController(); metaRequest.current = controller;
+    setMetaErr(null); setMeta(null); setMediaErr(false);
+    getJson<Meta>(`/api/nasa/climate-spiral?id=${id}`, { signal: controller.signal })
+      .then((value) => { if (!controller.signal.aborted) setMeta(value); })
+      .catch((error) => { if (!controller.signal.aborted) setMetaErr(error); });
+  };
+  useEffect(() => { loadMeta(svsId); return () => metaRequest.current?.abort(); }, [svsId]);
   useEffect(() => { if (video.current) video.current.playbackRate = vspeed; }, [vspeed, meta]);
 
   const all = useMemo(() => (data ? data.rows.filter((r) => svsId !== 5057 || r.year <= 2022) : []), [data, svsId]);

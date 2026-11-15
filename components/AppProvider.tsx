@@ -1,5 +1,5 @@
 "use client";
-import { createContext, useCallback, useContext, useEffect, useMemo, useState, type ReactNode } from "react";
+import { createContext, useCallback, useContext, useEffect, useMemo, useRef, useState, type ReactNode } from "react";
 import SignLanguages from "./SignLanguages";
 import { dict, type Dict, type Lang } from "../lib/i18n";
 import { DEF, type Prefs } from "../lib/prefs";
@@ -36,11 +36,14 @@ export default function AppProvider({ children }: { children: ReactNode }) {
     h.classList.toggle("hc", prefs.hc); h.classList.toggle("rm", prefs.rm); h.classList.toggle("tg", prefs.targets); h.classList.toggle("fx", prefs.focus); h.classList.toggle("vis", prefs.visual); h.classList.remove("ts1", "ts2"); if (prefs.size) h.classList.add(`ts${prefs.size}`);
     if (hydrated) { try { localStorage.setItem("sulco.prefs", JSON.stringify({ lang, prefs })); } catch {} }
   }, [lang, prefs, hydrated]);
+  const dataRequest = useRef<AbortController | null>(null);
   const loadData = useCallback((remote?: boolean) => {
+    dataRequest.current?.abort();
+    const controller = new AbortController(); dataRequest.current = controller;
     setDataErr(null); setData(null);
-    getJson<Data>(remote === true ? "/api/nasa/gistemp?source=remote" : "/api/nasa/gistemp").then(setData).catch((e) => setDataErr(e));
+    getJson<Data>(remote === true ? "/api/nasa/gistemp?source=remote" : "/api/nasa/gistemp", { signal: controller.signal }).then((value) => { if (!controller.signal.aborted) setData(value); }).catch((e) => { if (!controller.signal.aborted) setDataErr(e); });
   }, []);
-  useEffect(() => { loadData(); }, [loadData]);
+  useEffect(() => { loadData(); return () => dataRequest.current?.abort(); }, [loadData]);
   const value = useMemo<Ctx>(() => ({ lang, setLang, d: dict[lang], prefs, setPrefs, a11yOpen, setA11yOpen, data, dataErr, loadData }), [lang, prefs, a11yOpen, data, dataErr, loadData]);
   return (
     <C.Provider value={value}>

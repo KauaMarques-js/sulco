@@ -11,7 +11,7 @@ export function parseFirms(text: string): { rows: Detection[]; skipped: number; 
   const rows: Detection[] = []; let skipped = 0; const versions = new Set<string>();
   for (const l of L.slice(1)) {
     const c = l.split(","); const frp = Number(c[i.f]), lat = Number(c[i.la]), lon = Number(c[i.lo]);
-    if ([i.f, i.la, i.lo].some((n) => !(c[n] ?? "").trim()) || !/^\d{4}-\d{2}-\d{2}$/.test(c[i.d] ?? "") || !Number.isFinite(frp) || frp < 0 || !Number.isFinite(lat) || Math.abs(lat) > 90 || !Number.isFinite(lon) || Math.abs(lon) > 180) { skipped++; continue; }
+    if ([i.f, i.la, i.lo].some((n) => !(c[n] ?? "").trim()) || !/^\d{4}-\d{2}-\d{2}$/.test(c[i.d] ?? "") || !Number.isFinite(Date.parse(c[i.d])) || new Date(c[i.d]).toISOString().slice(0, 10) !== c[i.d] || !Number.isFinite(frp) || frp < 0 || !Number.isFinite(lat) || Math.abs(lat) > 90 || !Number.isFinite(lon) || Math.abs(lon) > 180) { skipped++; continue; }
     rows.push({ date: c[i.d], frp, lat, lon }); if (i.v >= 0 && c[i.v]) versions.add(c[i.v].trim());
   }
   return { rows, skipped, versions: [...versions] };

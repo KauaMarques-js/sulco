@@ -4,19 +4,20 @@
  "private": true,
  "description": "SULCO — NASA Earth data, pressed into sound.",
  "scripts": {
-  "dev": "next dev",
+  "dev": "node scripts/dev.mjs",
   "build": "next build",
   "start": "next start",
   "test:parser": "node --experimental-strip-types test/parser.test.ts",
   "test:player": "node --experimental-strip-types test/player.test.ts",
   "test:select": "node --experimental-strip-types test/select.test.ts",
-  "test": "npm run test:parser && npm run test:player && npm run test:select && npm run test:firms && npm run test:api && npm run test:oceans && npm run test:performance && npm run test:svs",
+  "test": "npm run test:parser && npm run test:player && npm run test:select && npm run test:firms && npm run test:api && npm run test:oceans && npm run test:performance && npm run test:svs && npm run test:audio",
   "update-data": "node --experimental-strip-types scripts/update-data.mjs",
   "test:firms": "node --experimental-strip-types test/firms.test.ts",
   "test:api": "node --experimental-strip-types test/api.test.ts",
   "test:oceans": "node --experimental-strip-types test/oceans.test.ts",
   "test:performance": "node --experimental-strip-types test/performance.test.ts",
-  "test:svs": "node --experimental-strip-types test/svs.test.ts"
+  "test:svs": "node --experimental-strip-types test/svs.test.ts",
+  "test:audio": "node --experimental-strip-types test/audio.test.ts"
  },
  "dependencies": {
   "leaflet": "^1.9.4",

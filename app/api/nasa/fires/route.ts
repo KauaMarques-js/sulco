@@ -1,6 +1,6 @@
 import { mapConcurrent } from "../../../../lib/nasa/parallel.ts";
 import { AREAS, SOURCES, parseFirms, aggregateDaily, sampleDetections } from "../../../../lib/firms.ts";
-import { fetchText, SourceError } from "../../../../lib/nasa/fetchText.ts";
+import { fetchData, SourceError } from "../../../../lib/nasa/fetchText.ts";
 export const dynamic = "force-dynamic";
 const iso = (t: number) => new Date(t * 864e5).toISOString().slice(0, 10);
 
@@ -20,13 +20,12 @@ export async function GET(req: Request) {
       queries.push({ src, n: Math.min(5, days - off), start: end - days + 1 + off });
     }
     const parsed = await mapConcurrent(queries, 3, async ({ src, n, start }) => {
-      const { body } = await fetchText(`https://firms.modaps.eosdis.nasa.gov/api/area/csv/${key}/${src}/${AREAS[area]}/${n}/${iso(start)}`, "text/csv,*/*", 3600);
-      return parseFirms(body);
+      return fetchData(`https://firms.modaps.eosdis.nasa.gov/api/area/csv/${key}/${src}/${AREAS[area]}/${n}/${iso(start)}`, "text/csv,*/*", 3600, parseFirms);
     });
-    const all = parsed.flatMap((p) => p.rows);
-    const skipped = parsed.reduce((sum, p) => sum + p.skipped, 0);
-    const versions = new Set(parsed.flatMap((p) => p.versions));
-    return Response.json({ source: "NASA FIRMS", products: SOURCES[sat], area, bbox: AREAS[area], start: iso(end - days + 1), end: endStr, collectedAt: new Date().toISOString(),
+    const all = parsed.flatMap((p) => p.data.rows);
+    const skipped = parsed.reduce((sum, p) => sum + p.data.skipped, 0);
+    const versions = new Set(parsed.flatMap((p) => p.data.versions));
+    return Response.json({ source: "NASA FIRMS", products: SOURCES[sat], area, bbox: AREAS[area], start: iso(end - days + 1), end: endStr, collectedAt: new Date().toISOString(), sourceFetchedAt: parsed.map((p) => p.fetchedAt).sort()[0],
       versions: [...versions], detections: all.length, skipped, unit: "MW (FRP)", points: sampleDetections(all), days: aggregateDaily(all) });
   } catch (e) {
     const se = e instanceof SourceError ? e : null;

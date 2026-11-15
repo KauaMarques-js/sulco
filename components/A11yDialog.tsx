@@ -6,7 +6,7 @@ import { Icon } from "./Icons";
 
 type B = Exclude<keyof Prefs, "size">;
 
-// <dialog>.showModal(): keeps focus inside, closes with Esc and restores focus to the opener.
+// Native modal semantics, Escape and focus restoration; wrap Tab before browser chrome.
 export default function A11yDialog() {
   const { d, lang, prefs, setPrefs, a11yOpen, setA11yOpen } = useApp();
   const ref = useRef<HTMLDialogElement>(null);
@@ -32,7 +32,14 @@ export default function A11yDialog() {
   const info = (t: string) => <p className="swh" style={{ padding: ".6rem 0", display: "flex", gap: ".5rem" }}><Icon name="info" size={15} /> <span>{t}</span></p>;
 
   return (
-    <dialog ref={ref} className="dlg" aria-describedby="a11y-intro" aria-labelledby="a11y-t" onClose={() => setA11yOpen(false)} onClick={(e) => { if (e.target === ref.current) setA11yOpen(false); }}>
+    <dialog ref={ref} className="dlg" aria-describedby="a11y-intro" aria-labelledby="a11y-t" onClose={() => setA11yOpen(false)} onKeyDown={(event) => {
+      if (event.key !== "Tab") return;
+      const controls = Array.from(event.currentTarget.querySelectorAll<HTMLElement>('a[href], button, input, select, textarea, [tabindex]'))
+        .filter((el) => el.tabIndex >= 0 && !el.matches(':disabled, [inert], [inert] *') && el.getClientRects().length > 0);
+      const first = controls[0], last = controls[controls.length - 1];
+      if (event.shiftKey && document.activeElement === first) { event.preventDefault(); last?.focus(); }
+      else if (!event.shiftKey && document.activeElement === last) { event.preventDefault(); first?.focus(); }
+    }} onClick={(e) => { if (e.target === ref.current) setA11yOpen(false); }}>
       <div className="dlgin">
         <div className="row" style={{ justifyContent: "space-between", alignItems: "flex-start", marginBottom: "1rem" }}>
           <div>

@@ -1,0 +1,45 @@
+
+> sulco@1.0.0 build
+> next build
+
+   ▲ Next.js 15.5.29
+   - Environments: .env.local
+
+   Creating an optimized production build ...
+ ✓ Compiled successfully in 4.1s
+   Linting and checking validity of types ...
+   Collecting page data ...
+   Generating static pages (0/15) ...
+   Generating static pages (3/15) 
+   Generating static pages (7/15) 
+   Generating static pages (11/15) 
+ ✓ Generating static pages (15/15)
+   Finalizing page optimization ...
+   Collecting build traces ...
+
+Route (app)                                 Size  First Load JS
+┌ ○ /                                      167 B         131 kB
+├ ○ /_not-found                            142 B         103 kB
+├ ○ /about                                 167 B         131 kB
+├ ƒ /api/nasa/climate-spiral               142 B         103 kB
+├ ƒ /api/nasa/fires                        142 B         103 kB
+├ ƒ /api/nasa/fires/availability           142 B         103 kB
+├ ƒ /api/nasa/gistemp                      142 B         103 kB
+├ ƒ /api/nasa/media                        142 B         103 kB
+├ ƒ /api/nasa/oceans                       142 B         103 kB
+├ ○ /data                                7.95 kB         127 kB
+├ ○ /discover                              142 B         103 kB
+├ ○ /experiences                           166 B         131 kB
+├ ○ /experiences/climate                 9.38 kB         131 kB
+├ ○ /experiences/fires                   6.56 kB         132 kB
+├ ○ /experiences/oceans                  7.42 kB         130 kB
+└ ○ /icon.svg                                0 B            0 B
++ First Load JS shared by all             102 kB
+  ├ chunks/655-08bfff3f539f2beb.js       46.3 kB
+  ├ chunks/97787726-7de585790355dfc7.js  54.2 kB
+  └ other shared chunks (total)          1.97 kB
+
+
+○  (Static)   prerendered as static content
+ƒ  (Dynamic)  server-rendered on demand
+

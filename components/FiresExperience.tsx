@@ -64,7 +64,7 @@ export default function FiresExperience() {
         {f.err?.missingKey && <div className="setup-notice" role="alert"><Icon name="flame" size={26} /><div><h3>{lang === "pt-BR" ? "Conecte sua chave NASA FIRMS" : "Connect your NASA FIRMS key"}</h3><p>{d.fNeedKey}</p><a className="btn" href="https://firms.modaps.eosdis.nasa.gov/api/map_key/" target="_blank" rel="noopener noreferrer">{lang === "pt-BR" ? "Obter chave gratuita" : "Get a free key"} ↗</a></div></div>}
         {f.err && !f.err.missingKey && <p className="warn" role="alert">{d.failData}{f.err.detail && process.env.NODE_ENV !== "production" ? ` (${f.err.detail})` : ""}</p>}
         {f.data && <div className="pill-row" style={{ marginTop: "1rem" }}>
-          <span className="chip">{d.fCollected}: {new Date(f.data.collectedAt).toLocaleString(lang)}</span>
+          <span className="chip">{d.fCollected}: {new Date(f.data.sourceFetchedAt ?? f.data.collectedAt).toLocaleString(lang)}</span>
           <span className="chip">{f.data.start} → {f.data.end}</span>
           <span className="chip warm">{f.data.detections.toLocaleString(lang)} {d.fCount.toLowerCase()}</span>
         </div>}

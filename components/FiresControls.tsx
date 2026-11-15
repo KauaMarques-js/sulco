@@ -4,7 +4,7 @@ import { useApp } from "./AppProvider";
 import { SOURCES, type Detection, type Day } from "../lib/firms";
 
 export type FireParams = { area: string; sat: string; days: number; end: string };
-export type FireResp = { points?: Detection[]; source: string; products: string[]; area: string; start: string; end: string; collectedAt: string; versions: string[]; detections: number; skipped: number; days: Day[] };
+export type FireResp = { sourceFetchedAt?: string; points?: Detection[]; source: string; products: string[]; area: string; start: string; end: string; collectedAt: string; versions: string[]; detections: number; skipped: number; days: Day[] };
 export type FireErr = { missingKey?: boolean; detail?: string };
 export function useFires(autoLoad = false) {
   const [availability, setAvailability] = useState<{ id: string; first: string; last: string }[]>([]);
@@ -49,7 +49,7 @@ export function FiresControls({ f }: { f: ReturnType<typeof useFires> }) {
       <label>{d.fDays}<select value={p.days} onChange={(e) => setParams({ ...p, days: +e.target.value })}>{[5, 10, 15, 30].map((n) => <option key={n} value={n}>{n}</option>)}</select></label>
       <label>{d.fEnd}<input type="date" value={p.end || f.latest} max={new Date().toISOString().slice(0, 10)} onChange={(e) => setParams({ ...p, end: e.target.value })} /></label>
       <button className="pri" disabled={f.loading} onClick={() => f.load()}>{f.loading ? d.loading : d.fLoad}</button>
-    </fieldset>{f.latest && <p className="query-source">{lang === "pt-BR" ? "Última data disponível nos satélites selecionados" : "Latest date available for the selected satellites"}: {f.latest} · NASA FIRMS</p>}
+    </fieldset><p role="status" className="query-source">{f.loading ? d.loading : ""}</p>{f.latest && <p className="query-source">{lang === "pt-BR" ? "Última data disponível nos satélites selecionados" : "Latest date available for the selected satellites"}: {f.latest} · NASA FIRMS</p>}
     {f.availabilityUnavailable && <p role="status" className="query-source">{lang === "pt-BR" ? "Não foi possível consultar a última data disponível. Selecione uma data para consultar manualmente." : "Could not check the latest available date. Select a date to query manually."}</p>}
     </div>
   );

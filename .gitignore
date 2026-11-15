@@ -26,3 +26,6 @@ coverage/
 .env
 .env*.local
 .env.production
+
+# Local preview process lock
+.sulco-dev.lock

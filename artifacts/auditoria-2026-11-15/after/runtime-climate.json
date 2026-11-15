@@ -1,0 +1,11 @@
+{
+  "origin": "http://localhost:3000/experiences/climate",
+  "observationSeconds": 20,
+  "preferences": {
+    "lang": "pt-BR",
+    "vlibras": true
+  },
+  "rejections": [],
+  "events": [],
+  "limitation": "Erro original [object Event] não reproduzido; causa não confirmada."
+}

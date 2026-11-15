@@ -1,0 +1,48 @@
+{
+  "results": [
+    {
+      "name": "home",
+      "status": 200,
+      "violations": []
+    },
+    {
+      "name": "experiences",
+      "status": 200,
+      "violations": [],
+      "mobileOverflow": false
+    },
+    {
+      "name": "climate",
+      "status": 200,
+      "violations": [],
+      "mobileOverflow": false
+    },
+    {
+      "name": "fires",
+      "status": 200,
+      "violations": [],
+      "mobileOverflow": false
+    },
+    {
+      "name": "oceans",
+      "status": 200,
+      "violations": [],
+      "mobileOverflow": false
+    },
+    {
+      "name": "data",
+      "status": 200,
+      "violations": []
+    },
+    {
+      "name": "about",
+      "status": 200,
+      "violations": []
+    },
+    {
+      "name": "dialog",
+      "violations": []
+    }
+  ],
+  "errors": []
+}

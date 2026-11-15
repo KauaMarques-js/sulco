@@ -1,0 +1,164 @@
+[
+  {
+    "name": "climate",
+    "attempt": 1,
+    "status": 200,
+    "ms": 1273,
+    "rows": 1762,
+    "first": 1880,
+    "last": 2026,
+    "origin": "remote",
+    "fallback": false,
+    "sourceFetchedAt": "2026-11-15T17:48:29.596Z"
+  },
+  {
+    "name": "climate",
+    "attempt": 2,
+    "status": 200,
+    "ms": 18,
+    "rows": 1762,
+    "first": 1880,
+    "last": 2026,
+    "origin": "remote",
+    "fallback": false,
+    "sourceFetchedAt": "2026-11-15T17:48:29.596Z"
+  },
+  {
+    "name": "availability",
+    "attempt": 1,
+    "status": 200,
+    "ms": 845,
+    "rows": 2
+  },
+  {
+    "name": "availability",
+    "attempt": 2,
+    "status": 200,
+    "ms": 8,
+    "rows": 2
+  },
+  {
+    "name": "fires",
+    "attempt": 1,
+    "status": 200,
+    "ms": 2218,
+    "rows": 6594,
+    "first": "2026-10-24",
+    "last": "2026-11-02",
+    "sourceFetchedAt": "2026-11-15T17:48:31.478Z",
+    "hash": "f032301effeddf1513a5934a2785f6e570900d23fd5830d8456fa79b4752234c"
+  },
+  {
+    "name": "fires",
+    "attempt": 2,
+    "status": 200,
+    "ms": 59,
+    "rows": 6594,
+    "first": "2026-10-24",
+    "last": "2026-11-02",
+    "sourceFetchedAt": "2026-11-15T17:48:31.478Z",
+    "hash": "f032301effeddf1513a5934a2785f6e570900d23fd5830d8456fa79b4752234c"
+  },
+  {
+    "name": "ocean-global",
+    "attempt": 1,
+    "status": 200,
+    "ms": 709,
+    "rows": 287,
+    "first": "2026-11-07",
+    "last": "2026-11-13",
+    "hash": "160bf49515040515fc879e4fc2ee70eadce768c04655ebcc6f57c3df611e4acc"
+  },
+  {
+    "name": "ocean-global",
+    "attempt": 2,
+    "status": 200,
+    "ms": 14,
+    "rows": 287,
+    "first": "2026-11-07",
+    "last": "2026-11-13",
+    "hash": "160bf49515040515fc879e4fc2ee70eadce768c04655ebcc6f57c3df611e4acc"
+  },
+  {
+    "name": "ocean-br",
+    "attempt": 1,
+    "status": 200,
+    "ms": 303,
+    "rows": 686,
+    "first": "2026-11-07",
+    "last": "2026-11-13",
+    "hash": "f0f2ae7ffa7614c343c5f04b3efb5cd2c11960f5589cc8fa49cdddf44b2bdb13"
+  },
+  {
+    "name": "ocean-br",
+    "attempt": 2,
+    "status": 200,
+    "ms": 11,
+    "rows": 686,
+    "first": "2026-11-07",
+    "last": "2026-11-13",
+    "hash": "f0f2ae7ffa7614c343c5f04b3efb5cd2c11960f5589cc8fa49cdddf44b2bdb13"
+  },
+  {
+    "name": "ocean-nino34",
+    "attempt": 1,
+    "status": 200,
+    "ms": 212,
+    "rows": 1092,
+    "first": "2026-11-07",
+    "last": "2026-11-13",
+    "hash": "ccfbcc677269a7db1619a104a19c4fcacd049fddcdf421d7857ad730eb2501d4"
+  },
+  {
+    "name": "ocean-nino34",
+    "attempt": 2,
+    "status": 200,
+    "ms": 10,
+    "rows": 1092,
+    "first": "2026-11-07",
+    "last": "2026-11-13",
+    "hash": "ccfbcc677269a7db1619a104a19c4fcacd049fddcdf421d7857ad730eb2501d4"
+  },
+  {
+    "name": "svs-5057",
+    "attempt": 1,
+    "status": 200,
+    "ms": 1488,
+    "sourceFetchedAt": "2026-11-15T17:48:35.506Z"
+  },
+  {
+    "name": "svs-5057",
+    "attempt": 2,
+    "status": 200,
+    "ms": 6,
+    "sourceFetchedAt": "2026-11-15T17:48:35.506Z"
+  },
+  {
+    "name": "svs-5190",
+    "attempt": 1,
+    "status": 200,
+    "ms": 565,
+    "sourceFetchedAt": "2026-11-15T17:48:36.080Z"
+  },
+  {
+    "name": "svs-5190",
+    "attempt": 2,
+    "status": 200,
+    "ms": 7,
+    "sourceFetchedAt": "2026-11-15T17:48:36.080Z"
+  },
+  {
+    "name": "svs-5101",
+    "attempt": 1,
+    "status": 200,
+    "ms": 1580,
+    "sourceFetchedAt": "2026-11-15T17:48:37.665Z"
+  },
+  {
+    "name": "svs-5101",
+    "attempt": 2,
+    "status": 200,
+    "ms": 11,
+    "sourceFetchedAt": "2026-11-15T17:48:37.665Z"
+  }
+]
