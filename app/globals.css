@@ -722,3 +722,19 @@ body::before { display: none; }
 .leaflet-control-zoom a { color: #17211b; }
 @media (max-width: 600px) { .studio-catalog { grid-template-columns: 1fr; } .fire-map { height: 340px; } .fire-query label { max-width: 100%; } }
 .fire-map canvas { background: transparent; border: 0; border-radius: 0; }
+
+/* Accessibility essentials: usable without enabling an optional theme. */
+html { scroll-padding-top: 100px; }
+:root { --mut-2: #939fb9; }
+button, .btn, select, input:not([type="checkbox"]), summary { min-height: 44px; }
+input[type="checkbox"] { width: 24px; height: 24px; }
+:focus-visible { outline: 3px solid var(--cy); outline-offset: 4px; }
+html.ts1 { font-size: 120%; }
+html.ts2 { font-size: 140%; }
+html.ts1 body, html.ts2 body { font-size: 1rem; }
+html.hc .mut, html.hc .player-note, html.hc .swh { color: #fff; }
+.sign-host[hidden] { display: none !important; visibility: hidden !important; }
+.sign-error { padding: 1rem; max-width: 65ch; margin: 1rem auto; }
+.dlg { max-height: calc(100dvh - 2rem); overflow: auto; }
+@media (prefers-reduced-motion: reduce) { html { scroll-behavior: auto; } }
+.player-controls select { min-height: 44px; }

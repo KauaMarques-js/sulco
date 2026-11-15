@@ -21,8 +21,10 @@ export default function Footer() {
         <div>
           <h4>{d.footExplore}</h4>
           <ul>
+            <li><Link href="/experiences">{d.navExp}</Link></li>
             <li><Link href="/experiences/climate">{d.expTitles.climate}</Link></li>
             <li><Link href="/experiences/fires">{d.expTitles.wildfires}</Link></li>
+            <li><Link href="/experiences/oceans">{d.expTitles.oceans}</Link></li>
             <li><Link href="/data">{d.navData}</Link></li>
           </ul>
         </div>

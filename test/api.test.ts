@@ -11,6 +11,9 @@ const observations = Array.from({length: 3000}, (_, i) => ({date: `2026-01-0${i 
 const sample = sampleDetections(observations); assert.equal(sample.length, 2000); assert.equal(new Set(sample.map((r) => r.date)).size, 3); assert.ok(sample.every((r) => observations.includes(r)));
 assert.equal(parseFirms("latitude,longitude,acq_date,frp\n91,20,2026-01-01,3\n12,20,2026-01-01,\n12,181,2026-01-01,3").rows.length, 0);
 const originalFetch = globalThis.fetch;
+const originalNow = Date.now;
+let clock = originalNow();
+Date.now = () => clock;
 const originalKey = process.env.FIRMS_MAP_KEY;
 const csv = "Year,Jan,Feb,Mar,Apr,May,Jun,Jul,Aug,Sep,Oct,Nov,Dec\n2026,1,1,1,1,1,1,1,1,1,1,***,***";
 try {
@@ -20,10 +23,12 @@ try {
   process.env.FIRMS_MAP_KEY = "synthetic-test-key";
   globalThis.fetch = async () => new Response("data_id,min_date,max_date\nVIIRS_SNPP_NRT,2026-08-01,2026-11-02");
   r = await availability(); d = await r.json(); assert.equal(r.status, 200); assert.equal(d.products[0].last, "2026-11-02"); assert.equal(JSON.stringify(d).includes("synthetic-test-key"), false);
+  clock += 3601000; // An expired successful response must not mask a later source failure.
   globalThis.fetch = async () => new Response("invalid source response");
   r = await availability(); assert.equal(r.status, 502);
   globalThis.fetch = async () => new Response(csv);
   r = await climate(new Request("http://localhost/api/nasa/gistemp")); d = await r.json(); assert.equal(d.origin, "remote"); assert.equal(d.rows.length, 10); assert.match(d.sha256, /^[a-f0-9]{64}$/);
+  clock += 3601000;
   globalThis.fetch = async () => new Response("<html>unavailable</html>");
   r = await climate(new Request("http://localhost/api/nasa/gistemp")); d = await r.json(); assert.equal(d.origin, "local"); assert.equal(d.fallback, true);
   r = await climate(new Request("http://localhost/api/nasa/gistemp?source=remote")); assert.equal(r.status, 502);
@@ -38,4 +43,4 @@ try {
   globalThis.fetch = async () => { calls++; return new Response("latitude,longitude,acq_date,frp,version\n-12,-55,2026-01-01,10,2.0NRT"); };
   r = await fires(new Request("http://localhost/api/nasa/fires?days=10&sat=snpp&end=2026-01-10")); d = await r.json(); assert.equal(r.status, 200); assert.equal(calls, 2); assert.equal(d.start, "2026-01-01"); assert.equal(d.end, "2026-01-10"); assert.equal(JSON.stringify(d).includes("synthetic-test-key"), false);
   console.log("OK API: FIRMS availability, invalid coordinates, map sampling, private key, query dates, remote climate and explicit fallback");
-} finally { globalThis.fetch = originalFetch; if (originalKey === undefined) delete process.env.FIRMS_MAP_KEY; else process.env.FIRMS_MAP_KEY = originalKey; }
+} finally { Date.now = originalNow; globalThis.fetch = originalFetch; if (originalKey === undefined) delete process.env.FIRMS_MAP_KEY; else process.env.FIRMS_MAP_KEY = originalKey; }

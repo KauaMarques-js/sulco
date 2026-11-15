@@ -26,3 +26,7 @@ Detecções não equivalem a número de incêndios únicos ou perímetros queima
 - Checagem TypeScript e build de produção aprovados em cópia isolada.
 - Consulta autenticada real SNPP em Mato Grosso: 602 detecções e 602 coordenadas, de 2026-10-29 a 2026-11-02. A consulta anterior até 2026-11-15 havia retornado vazia; o endpoint de disponibilidade identificou a data publicada correta. Esses valores são evidência da sessão, não constantes do produto.
 - Chrome/Playwright, com APIs reais e sem mocks: 6.594 detecções na consulta inicial combinada de 2026-10-24 a 2026-11-02, amostra de 1.961 pontos no mapa, e 1.762 meses GISTEMP obtidos remotamente. Verificados redirecionamento de `/discover`, catálogo com duas experiências, disponibilidade, agregação, mapa e tiles, seleção por teclado/gráfico, áudio, layout móvel e ausência da chave em dados/requisições do cliente. Nenhum erro JavaScript de página observado.
+
+## Integração de desempenho e acessibilidade
+
+Integrada `api-key-map` até `993e92e` na branch de trabalho `feat/nasa-discover-earth`, preservando mapa, recorte temporal FIRMS e navegação simplificada. Inclui oceanos, cache/concorrência e recursos de acessibilidade. Conflitos resolvidos e JSON validado; servidor reiniciado com cache Next recriado após erro temporário durante o merge. `npm test` e build aprovados; páginas `/experiences`, `/experiences/oceans` e `/data` retornaram 200 no navegador, sem erros JavaScript de página. Entrega somente na branch de trabalho, sem alteração da main.

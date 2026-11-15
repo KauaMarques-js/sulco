@@ -21,7 +21,8 @@ const ICON: Record<string, IconName> = {
   energy: "bolt",
   disasters: "storm",
 };
-const HAS_PAGE = ["climate", "fires"];
+const HAS_PAGE = ["climate", "fires", "oceans"];
+const DEVELOPERS = ["Arthur Loni", "Carlos Eduardo", "Kauan Marques", "Adrielly Andrade"];
 
 const icon = (slug: string): IconName => ICON[slug] ?? "globe";
 
@@ -31,12 +32,12 @@ function ExpTile({ e, studio = false, latest }: { e: Exp; studio?: boolean; late
   const body = (
     <>
       {studio ? <div className={`experience-preview preview-${e.slug}`}>
-        {e.slug === "climate" && data ? <><MiniSeries rows={data.rows} /><p>{data.firstYear}–{data.lastYear} · NASA GISS</p></> : <div className="source-preview"><Icon name={icon(e.key)} size={28} /><span>NASA FIRMS / VIIRS</span><strong>{latest ?? "—"}</strong><p>{lang === "pt-BR" ? "Última data disponível" : "Latest available date"}</p></div>}
+        {e.slug === "climate" && data ? <><MiniSeries rows={data.rows} /><p>{data.firstYear}–{data.lastYear} · NASA GISS</p></> : <div className="source-preview"><Icon name={icon(e.key)} size={28} /><span>{e.slug === "fires" ? "NASA FIRMS / VIIRS" : e.dataSource}</span>{e.slug === "fires" ? <><strong>{latest ?? "—"}</strong><p>{lang === "pt-BR" ? "Última data disponível" : "Latest available date"}</p></> : <p>{e.slug === "climate" ? d.loading : (lang === "pt-BR" ? "Temperatura da superfície do mar · °C" : "Sea surface temperature · °C")}</p>}</div>}
       </div> : <div className="viz"><Icon name={icon(e.key)} size={44} /></div>}
       <Badge st={e.status} />
       <h3>{d.expTitles[e.key]}</h3>
       <p>{d.expDesc[e.key]}</p>
-      {studio && <div className="studio-card-meta"><span>{e.slug === "climate" ? (lang === "pt-BR" ? "1 mês = 1 nota" : "1 month = 1 note") : e.slug === "fires" ? (lang === "pt-BR" ? "1 dia = 1 passo" : "1 day = 1 step") : (lang === "pt-BR" ? "Em pesquisa" : "Under research")}</span><span>{e.apiKey ? (lang === "pt-BR" ? "Requer chave FIRMS" : "Requires FIRMS key") : e.slug === "climate" ? (lang === "pt-BR" ? "Sem chave de API" : "No API key needed") : "NASA SVS"}</span></div>}
+      {studio && <div className="studio-card-meta"><span>{e.slug === "climate" ? (lang === "pt-BR" ? "1 mês = 1 nota" : "1 month = 1 note") : e.slug === "fires" ? (lang === "pt-BR" ? "1 dia = 1 passo" : "1 day = 1 step") : (lang === "pt-BR" ? "1 dia = 1 nota" : "1 day = 1 note")}</span><span>{e.apiKey ? (lang === "pt-BR" ? "Requer chave FIRMS" : "Requires FIRMS key") : e.slug === "climate" ? (lang === "pt-BR" ? "Sem chave de API" : "No API key needed") : "NOAA CoastWatch"}</span></div>}
       <div className="tile-foot">
         {open ? <>{d.openExp} <Icon name="arrow" size={16} /></> : <span className="mut">{d.stValidating}</span>}
       </div>
@@ -257,6 +258,24 @@ export function About() {
             <p>{d.aboutLimits}</p>
             <p className="warn" style={{ marginBottom: 0 }}>{d.aboutDisclaimer}</p>
           </div>
+        </section>
+
+        <section className="section" aria-labelledby="devs">
+          <div className="section-head">
+            <div>
+              <p className="eyebrow">{d.devsEyebrow}</p>
+              <h2 id="devs">{d.devsTitle}</h2>
+              <p>{d.devsIntro}</p>
+            </div>
+          </div>
+          <ul className="grid" style={{ listStyle: "none", padding: 0, margin: 0 }}>
+            {DEVELOPERS.map((name) => (
+              <li key={name} className="card" style={{ margin: 0 }}>
+                <strong style={{ display: "block", fontSize: "1.02rem", marginBottom: ".55rem" }}>{name}</strong>
+                <span className="chip">{d.devsNationality}</span>
+              </li>
+            ))}
+          </ul>
         </section>
 
         <section className="section" aria-labelledby="sc">

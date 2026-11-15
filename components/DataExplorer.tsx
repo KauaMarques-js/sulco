@@ -3,8 +3,10 @@ import { useEffect, useMemo, useState } from "react";
 import { useApp } from "./AppProvider";
 import LineChart from "./LineChart";
 import FiresChart from "./FiresChart";
+import OceansChart from "./OceansChart";
 import ErrBox from "./ErrBox";
 import { FiresControls, useFires } from "./FiresControls";
+import OceansControls, { useOceans } from "./OceansControls";
 import { Icon } from "./Icons";
 
 function save(name: string, text: string) {
@@ -17,8 +19,13 @@ function save(name: string, text: string) {
 
 export default function DataExplorer() {
   const { lang, d, data, dataErr, loadData } = useApp();
-  const [ds, setDs] = useState<"climate" | "fires">("climate"), [y1, setY1] = useState(0), [y2, setY2] = useState(0), [tbl, setTbl] = useState(false);
+  const [ds, setDs] = useState<"climate" | "fires" | "oceans">("climate"), [y1, setY1] = useState(0), [y2, setY2] = useState(0), [tbl, setTbl] = useState(false);
   const f = useFires();
+  const o = useOceans(ds === "oceans");
+  useEffect(() => {
+    const q = new URLSearchParams(window.location.search).get("ds");
+    if (q === "fires" || q === "oceans" || q === "climate") setDs(q);
+  }, []);
   const nf = (v: number, n = 2) => v.toLocaleString(lang, { minimumFractionDigits: n, maximumFractionDigits: n });
   useEffect(() => { if (data) { setY1(data.firstYear); setY2(data.lastYear); } }, [data]);
   const sel = useMemo(() => (data ? data.rows.filter((r) => r.year >= y1 && r.year <= y2) : []), [data, y1, y2]);
@@ -35,6 +42,7 @@ export default function DataExplorer() {
         <div className="seg" role="group" aria-label={d.dataPick}>
           <button aria-pressed={ds === "climate"} onClick={() => setDs("climate")}>{d.dsClimate}</button>
           <button aria-pressed={ds === "fires"} onClick={() => setDs("fires")}>{d.dsFires}</button>
+          <button aria-pressed={ds === "oceans"} onClick={() => setDs("oceans")}>{d.dsOceans}</button>
         </div>
       </div>
 
@@ -99,7 +107,6 @@ export default function DataExplorer() {
         <div className="section-head" style={{ marginBottom: "1rem" }}>
           <div><p className="eyebrow">NASA FIRMS · VIIRS</p><h2 id="df" style={{ margin: 0 }}>{d.dsFires}</h2></div>
         </div>
-        <p className="warn">{d.fValid}</p>
         <FiresControls f={f} />
         {f.err?.missingKey && <p className="warn" role="alert">{d.fNeedKey}</p>}
         {f.err && !f.err.missingKey && <p className="warn" role="alert">{d.failData}</p>}
@@ -121,6 +128,45 @@ export default function DataExplorer() {
               <caption className="sr">{d.dsFires}</caption>
               <thead><tr><th scope="col">{d.fEnd}</th><th scope="col">{d.fCount}</th><th scope="col">{d.fFrp}</th><th scope="col">{d.fFrpSum}</th></tr></thead>
               <tbody>{f.data.days.map((x) => <tr key={x.date}><td>{x.date}</td><td>{x.count}</td><td>{nf(x.frpMean, 1)}</td><td>{nf(x.frpSum, 1)}</td></tr>)}</tbody>
+            </table>
+          </div>
+        </>)}
+      </section>}
+
+      {ds === "oceans" && <section className="card" aria-labelledby="do">
+        <div className="section-head" style={{ marginBottom: "1rem" }}>
+          <div><p className="eyebrow">NASA SVS 5101 · NOAA CoastWatch ERDDAP</p><h2 id="do" style={{ margin: 0 }}>{d.dsOceans}</h2></div>
+          {o.data && <span className="badge is-ok">{d.available}</span>}
+        </div>
+        <OceansControls o={o} />
+        {o.busy && !o.data && <p role="status">{d.loading}</p>}
+        {o.err && <ErrBox d={d} f={o.err} msg={d.oFailData} retry={o.load} />}
+        {o.data && <div className="pill-row">
+          <span className="chip">{d.fCollected}: {new Date(o.data.collectedAt).toLocaleString(lang)}</span>
+          <span className="chip">{o.data.dataset}</span>
+          <span className="chip">{d.unit}: {o.data.unit}</span>
+          <span className="chip">{d.oGridStep}: {o.data.gridStepDeg}°</span>
+          <span className="chip">{o.data.start} → {o.data.end}</span>
+          <span className="chip cool">{o.data.samples.toLocaleString(lang)} {d.oSamples.toLowerCase()}</span>
+          <span className="chip">{o.data.skipped.toLocaleString(lang)} {d.oSkipped}</span>
+        </div>}
+        {o.data && (o.data.days.length === 0 ? <p>{d.oNoData}</p> : <>
+          {(() => {
+            const vals = o.data.days.map((x) => x.sstMean);
+            const omn = Math.min(...vals), omx = Math.max(...vals), oavg = vals.reduce((s, v) => s + v, 0) / vals.length;
+            const odesc = d.oDesc(o.data.days[0].date, o.data.days[o.data.days.length - 1].date, nf(omn), nf(omx), nf(oavg), o.data.days.length);
+            return <OceansChart days={o.data.days} desc={odesc} />;
+          })()}
+          <p className="mut" style={{ fontSize: ".85rem" }}>{d.procText} {d.oBoxNote}</p>
+          <div className="row">
+            <button onClick={() => save(`coastwatch_sst_${o.data!.basin}.csv`, "date,basin,sst_mean_c,sst_min_c,sst_max_c,samples,source\n" + o.data!.days.map((x) => `${x.date},${o.data!.basin},${x.sstMean.toFixed(4)},${x.sstMin.toFixed(4)},${x.sstMax.toFixed(4)},${x.samples},NOAA_CoastWatch_noaacwBLENDEDCsstDaily`).join("\n"))}><Icon name="download" size={16} /> {d.download}</button>
+          </div>
+          <p className="player-note">{d.derivedNote}</p>
+          <div className="scroll" style={{ marginTop: "1rem" }}>
+            <table>
+              <caption className="sr">{d.dsOceans}</caption>
+              <thead><tr><th scope="col">{d.oDate}</th><th scope="col">{d.oMean}</th><th scope="col">{d.oMin}</th><th scope="col">{d.oMax}</th><th scope="col">{d.oSamples}</th></tr></thead>
+              <tbody>{o.data.days.map((x) => <tr key={x.date}><td>{x.date}</td><td>{nf(x.sstMean)}</td><td>{nf(x.sstMin)}</td><td>{nf(x.sstMax)}</td><td>{x.samples}</td></tr>)}</tbody>
             </table>
           </div>
         </>)}
