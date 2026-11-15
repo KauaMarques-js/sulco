@@ -1,3 +1,4 @@
+import { mapConcurrent } from "../../../../lib/nasa/parallel.ts";
 import { AREAS, SOURCES, parseFirms, aggregateDaily } from "../../../../lib/firms";
 import { fetchText, SourceError } from "../../../../lib/nasa/fetchText";
 export const dynamic = "force-dynamic";
@@ -14,12 +15,17 @@ export async function GET(req: Request) {
   if (!Number.isFinite(end) || end > today) return Response.json({ error: "invalid_params", message: "Data final inválida." }, { status: 400 });
   const scrub = (s: string) => s.split(key).join("***");
   try {
-    const all = []; let skipped = 0; const versions = new Set<string>();
-    for (const src of SOURCES[sat]) for (let off = 0; off < days; off += 5) { // FIRMS: janelas curtas por requisição
-      const n = Math.min(5, days - off), start = end - days + 1 + off;
-      const { body } = await fetchText(`https://firms.modaps.eosdis.nasa.gov/api/area/csv/${key}/${src}/${AREAS[area]}/${n}/${iso(start)}`, "text/csv,*/*", 3600);
-      const p = parseFirms(body); for (const r of p.rows) all.push(r); skipped += p.skipped; p.versions.forEach((v) => versions.add(v));
+    const queries: { src: string; n: number; start: number }[] = [];
+    for (const src of SOURCES[sat]) for (let off = 0; off < days; off += 5) {
+      queries.push({ src, n: Math.min(5, days - off), start: end - days + 1 + off });
     }
+    const parsed = await mapConcurrent(queries, 3, async ({ src, n, start }) => {
+      const { body } = await fetchText(`https://firms.modaps.eosdis.nasa.gov/api/area/csv/${key}/${src}/${AREAS[area]}/${n}/${iso(start)}`, "text/csv,*/*", 3600);
+      return parseFirms(body);
+    });
+    const all = parsed.flatMap((p) => p.rows);
+    const skipped = parsed.reduce((sum, p) => sum + p.skipped, 0);
+    const versions = new Set(parsed.flatMap((p) => p.versions));
     return Response.json({ source: "NASA FIRMS", products: SOURCES[sat], area, bbox: AREAS[area], start: iso(end - days + 1), end: endStr, collectedAt: new Date().toISOString(),
       versions: [...versions], detections: all.length, skipped, unit: "MW (FRP)", days: aggregateDaily(all) });
   } catch (e) {

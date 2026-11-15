@@ -21,7 +21,7 @@ export default function DataExplorer() {
   const { lang, d, data, dataErr, loadData } = useApp();
   const [ds, setDs] = useState<"climate" | "fires" | "oceans">("climate"), [y1, setY1] = useState(0), [y2, setY2] = useState(0), [tbl, setTbl] = useState(false);
   const f = useFires();
-  const o = useOceans();
+  const o = useOceans(ds === "oceans");
   useEffect(() => {
     const q = new URLSearchParams(window.location.search).get("ds");
     if (q === "fires" || q === "oceans" || q === "climate") setDs(q);

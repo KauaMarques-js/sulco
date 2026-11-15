@@ -10,10 +10,11 @@
   "test:parser": "node --experimental-strip-types test/parser.test.ts",
   "test:player": "node --experimental-strip-types test/player.test.ts",
   "test:select": "node --experimental-strip-types test/select.test.ts",
-  "test": "npm run test:parser && npm run test:player && npm run test:select && npm run test:firms && npm run test:oceans",
+  "test": "npm run test:parser && npm run test:player && npm run test:select && npm run test:firms && npm run test:oceans && npm run test:performance",
   "update-data": "node --experimental-strip-types scripts/update-data.mjs",
   "test:firms": "node --experimental-strip-types test/firms.test.ts",
-  "test:oceans": "node --experimental-strip-types test/oceans.test.ts"
+  "test:oceans": "node --experimental-strip-types test/oceans.test.ts",
+  "test:performance": "node --experimental-strip-types test/performance.test.ts"
  },
  "dependencies": {
   "next": "^15.0.0",

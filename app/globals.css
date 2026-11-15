@@ -763,3 +763,19 @@ html.hc select option:checked:focus { background: #fff linear-gradient(0deg, #ff
   html.hc select option:checked:focus-visible { background: #fff; color: #000; }
   html.hc select option::checkmark { color: #000; }
 }
+
+/* Accessibility essentials: usable without enabling an optional theme. */
+html { scroll-padding-top: 100px; }
+:root { --mut-2: #939fb9; }
+button, .btn, select, input:not([type="checkbox"]), summary { min-height: 44px; }
+input[type="checkbox"] { width: 24px; height: 24px; }
+:focus-visible { outline: 3px solid var(--cy); outline-offset: 4px; }
+html.ts1 { font-size: 120%; }
+html.ts2 { font-size: 140%; }
+html.ts1 body, html.ts2 body { font-size: 1rem; }
+html.hc .mut, html.hc .player-note, html.hc .swh { color: #fff; }
+.sign-host[hidden] { display: none !important; visibility: hidden !important; }
+.sign-error { padding: 1rem; max-width: 65ch; margin: 1rem auto; }
+.dlg { max-height: calc(100dvh - 2rem); overflow: auto; }
+@media (prefers-reduced-motion: reduce) { html { scroll-behavior: auto; } }
+.player-controls select { min-height: 44px; }

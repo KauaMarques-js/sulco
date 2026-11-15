@@ -1,11 +1,13 @@
 "use client";
 import { useEffect, useRef, useState } from "react";
+import { useApp } from "./AppProvider";
 import { Player } from "../lib/audio/player";
 import { AudioEngine } from "../lib/audio/engine";
 
 type CB<T> = { note: (it: T, speed: number, e: AudioEngine) => void; step?: (it: T, k: number) => void; end?: () => void };
 /** Player + áudio + onda/espectro em tempo real. Callbacks lidos via ref (sem closures velhas). */
 export function usePlayback<T>(items: T[], cb: CB<T>) {
+  const { prefs } = useApp();
   const [idx, setIdx] = useState(0), [playing, setPlaying] = useState(false), [speed, setSpeed] = useState(0.5), [vol, setVol] = useState(40);
   const P = useRef<Player | null>(null), E = useRef<AudioEngine | null>(null), itemsRef = useRef(items), cbRef = useRef(cb), cv = useRef<HTMLCanvasElement>(null);
   // Buffers reaproveitados: alocar Uint8Array a 60 fps gerava GC constante e engasgos.

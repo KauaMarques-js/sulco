@@ -75,7 +75,7 @@ export default function OceansExperience() {
       setLog((prev) => (prev[prev.length - 1] === line ? prev : [...prev.slice(-119), line]));
       if (prefs.verbose) setSrLive(line);
     },
-    end: () => setEnded(true),
+    end: () => { setEnded(true); setSrLive(d.ended); },
   });
 
   useEffect(() => {
@@ -317,6 +317,7 @@ export default function OceansExperience() {
                 />
               </div>
               <canvas
+                role="img"
                 ref={pb.cv}
                 width={560}
                 height={110}
@@ -329,7 +330,7 @@ export default function OceansExperience() {
           {/* Captions & Transcript */}
           <div style={{ marginBottom: "1rem" }}>
             <h3 style={{ marginTop: 0 }}>{d.tCaptions}</h3>
-            <p role="status" aria-live="polite" style={{ fontFamily: "ui-monospace, monospace", fontSize: ".95rem" }}>
+            <p style={{ fontFamily: "ui-monospace, monospace", fontSize: ".95rem" }}>
               {ended ? d.ended : cur && (pb.playing || log.length > 0) ? describeDay(cur) : d.noAudio}
             </p>
             <div role="status" aria-live="polite" className="sr">{srLive}</div>
