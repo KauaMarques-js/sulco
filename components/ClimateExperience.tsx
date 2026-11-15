@@ -11,7 +11,6 @@ import LineChart from "./LineChart";
 import ErrBox from "./ErrBox";
 import Det from "./Det";
 import PlayerTransport from "./PlayerTransport";
-import ExperienceIntro from "./ExperienceIntro";
 import { Icon } from "./Icons";
 
 type Meta = { id: number; page: string; title: string | null; description: string | null; credits: string | null; video: string | null; image: string | null };
@@ -21,7 +20,7 @@ const proxied = (u: string) => `/api/nasa/media?u=${encodeURIComponent(u)}`;
 
 export default function ClimateExperience() {
   const { lang, d, prefs, data, dataErr, loadData } = useApp();
-  const [svsId, setSvsId] = useState(5057), [meta, setMeta] = useState<Meta | null>(null), [metaErr, setMetaErr] = useState<Fail | null>(null);
+  const [svsId, setSvsId] = useState(5190), [meta, setMeta] = useState<Meta | null>(null), [metaErr, setMetaErr] = useState<Fail | null>(null);
   const [y1, setY1] = useState(0), [y2, setY2] = useState(0), [live, setLive] = useState(""), [tr, setTr] = useState<string[]>([]), [vspeed, setVspeed] = useState(0.5);
   const [mediaErr, setMediaErr] = useState(false);
   const video = useRef<HTMLVideoElement>(null);
@@ -66,12 +65,18 @@ export default function ClimateExperience() {
         <span className="chip">{d.unit}: °C</span>
       </div>
 
-      <ExperienceIntro kind="climate" />
+
 
       <section id="experience-studio" className="card studio-filters" aria-labelledby="c3">
         <div className="section-head" style={{ marginBottom: "1rem" }}>
           <div><p className="eyebrow">{d.period}</p><h2 id="c3" style={{ margin: 0 }}>{d.s2}</h2></div>
           {data && sel.length > 0 && <div className="row">
+          <label style={{ minWidth: 190 }}>{d.variant}
+            <select value={svsId} onChange={(e) => setSvsId(+e.target.value)}>
+              <option value={5057}>SVS 5057 (1880–2022)</option>
+              <option value={5190}>SVS 5190</option>
+            </select>
+          </label>
             <label>{d.startYear}<input type="number" value={y1} min={all[0].year} max={y2} onChange={(e) => setY1(Math.min(Math.max(+e.target.value || all[0].year, all[0].year), y2))} /></label>
             <label>{d.endYear}<input type="number" value={y2} min={y1} max={all[all.length - 1].year} onChange={(e) => setY2(Math.max(Math.min(+e.target.value || y2, all[all.length - 1].year), y1))} /></label>
           </div>}
@@ -111,7 +116,8 @@ export default function ClimateExperience() {
             </div>
             <div className="viz-side">
               {!prefs.simple && <>
-                <LineChart rows={sel} idx={pb.idx} desc={desc} />
+                <LineChart rows={sel} idx={pb.idx} desc={desc} onSelect={(i) => pb.seek(i)} />
+                <p className="query-source">{lang === "pt-BR" ? "Clique em um mês no gráfico ou use a linha do tempo para navegar pelo teclado." : "Click a month in the chart or use the timeline to navigate with the keyboard."}</p>
                 <p className="mut" style={{ fontSize: ".8rem", margin: 0 }}>{desc}</p>
               </>}
               <div className="wave">
@@ -149,12 +155,7 @@ export default function ClimateExperience() {
             <p className="eyebrow">NASA SVS</p>
             <h2 id="c1" style={{ margin: 0 }}>{d.s1}</h2>
           </div>
-          <label style={{ minWidth: 190 }}>{d.variant}
-            <select value={svsId} onChange={(e) => setSvsId(+e.target.value)}>
-              <option value={5057}>SVS 5057 (1880–2022)</option>
-              <option value={5190}>SVS 5190</option>
-            </select>
-          </label>
+
         </div>
         <p className="mut" style={{ fontSize: ".88rem" }}>{svsId === 5057 ? d.clipped : d.ver5190}</p>
         {!meta && !metaErr && <p role="status">{d.loading}</p>}

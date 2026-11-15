@@ -21,3 +21,8 @@ Thumbs.db
 
 # Tests / coverage
 coverage/
+
+# Local credentials
+.env
+.env*.local
+.env.production

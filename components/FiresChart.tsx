@@ -1,4 +1,4 @@
-export default function FiresChart({ days, idx, desc }: { days: { date: string; count: number; frpMean: number }[]; idx?: number; desc: string }) {
+export default function FiresChart({ days, idx, desc, onSelect }: { days: { date: string; count: number; frpMean: number }[]; idx?: number; desc: string; onSelect?: (index: number) => void }) {
   if (!days.length) return null;
   const W = 1000, H = 300, M = { l: 48, r: 16, t: 24, b: 34 };
   const mc = Math.max(...days.map((x) => x.count)) || 1;
@@ -12,7 +12,7 @@ export default function FiresChart({ days, idx, desc }: { days: { date: string; 
 
   return (
     <div className="chart-wrap">
-      <svg viewBox={`0 0 ${W} ${H}`} role="img" aria-label={desc}>
+      <svg viewBox={`0 0 ${W} ${H}`} role={onSelect ? "group" : "img"} aria-label={desc}>
         <defs>
           <linearGradient id="fire-bars" x1="0" y1="0" x2="0" y2="1">
             <stop offset="0" stopColor="#7fe7ff" stopOpacity=".95" />
@@ -41,6 +41,8 @@ export default function FiresChart({ days, idx, desc }: { days: { date: string; 
         })}
 
         <polyline fill="none" stroke="#f7b56b" strokeWidth="2.4" strokeDasharray="7 5" strokeLinecap="round" points={days.map((x, i) => `${X(i) + bw / 2},${YF(x.frpMean)}`).join(" ")} />
+
+        {onSelect && days.map((x, i) => <rect key={`select-${x.date}`} x={X(i)} y={M.t} width={bw} height={base - M.t} fill="transparent" role="button" tabIndex={0} aria-label={`${x.date} · ${x.count} · ${x.frpMean.toFixed(1)} MW`} onClick={() => onSelect(i)} onKeyDown={(e) => { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); onSelect(i); } }} style={{ cursor: "pointer" }} />)}
 
         <text x={M.l} y={H - 8} fill="#6b7690" fontSize="11" fontFamily="ui-monospace, monospace">{days[0].date}</text>
         <text x={W - M.r} y={H - 8} textAnchor="end" fill="#6b7690" fontSize="11" fontFamily="ui-monospace, monospace">{days[days.length - 1].date}</text>

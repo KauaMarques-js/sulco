@@ -8,14 +8,14 @@ import { FiresControls, useFires } from "./FiresControls";
 import FiresChart from "./FiresChart";
 import Det from "./Det";
 import PlayerTransport from "./PlayerTransport";
-import ExperienceIntro from "./ExperienceIntro";
+import FireMap from "./FireMap";
 import { Icon } from "./Icons";
 
 type Item = Day & { f: number; pulses: number };
 
 export default function FiresExperience() {
   const { lang, d, prefs } = useApp();
-  const f = useFires();
+  const f = useFires(true);
   const [roll, setRoll] = useState(true), [live, setLive] = useState(""), [tr, setTr] = useState<string[]>([]);
   const nf = (v: number, n = 1) => v.toLocaleString(lang, { maximumFractionDigits: n });
 
@@ -38,8 +38,12 @@ export default function FiresExperience() {
 
   const cur = items[Math.min(pb.idx, items.length - 1)];
   const peak = items.reduce((a, x) => (x.count > a.count ? x : a), items[0] ?? ({ date: "", count: 0 } as Item));
-  const desc = items.length ? d.fDesc(items[0].date, items[items.length - 1].date, items.reduce((s, x) => s + x.count, 0), peak.date, peak.count) : "";
+  const desc = items.length ? (roll
+    ? (lang === "pt-BR" ? `Janelas móveis de 5 dias terminando entre ${items[0].date} e ${items[items.length - 1].date}. Total de detecções no período consultado: ${f.data?.detections ?? 0}. Maior janela: ${peak.count}, terminando em ${peak.date}.` : `Rolling 5-day windows ending between ${items[0].date} and ${items[items.length - 1].date}. Total detections in the queried period: ${f.data?.detections ?? 0}. Largest window: ${peak.count}, ending ${peak.date}.`)
+    : d.fDesc(items[0].date, items[items.length - 1].date, f.data?.detections ?? 0, peak.date, peak.count)) : "";
 
+  const mapFrom = cur ? (roll ? new Date(Date.parse(cur.date + "T00:00:00Z") - 4 * 864e5).toISOString().slice(0, 10) : cur.date) : "";
+  const mapCount = f.data?.days.filter((x) => x.date >= mapFrom && x.date <= (cur?.date ?? "")).reduce((sum, x) => sum + x.count, 0) ?? 0;
   return (
     <article>
       <Link className="back" href="/experiences">← {d.back}</Link>
@@ -47,7 +51,7 @@ export default function FiresExperience() {
       <h1>{d.expTitles.wildfires}</h1>
       <p className="lead">{d.fIntro}</p>
       <p className="warn">{d.fValid}</p>
-      <ExperienceIntro kind="fires" />
+
 
       <section id="experience-studio" className="card studio-filters" aria-labelledby="f1">
         <div className="section-head" style={{ marginBottom: "1rem" }}>
@@ -87,7 +91,9 @@ export default function FiresExperience() {
             <p className="sr" role="status" aria-live="polite">{live}</p>
             <p className="player-note">{d.noAudio}</p>
 
-            <FiresChart days={items} idx={pb.idx} desc={desc} />
+            <FiresChart days={items} idx={pb.idx} desc={desc} onSelect={(i) => pb.seek(i)} />
+            <p className="query-source">{lang === "pt-BR" ? "Clique em um dia no gráfico para mudar a seleção." : "Select a day in the chart to change the selection."}</p>
+            {f.data?.points && <FireMap points={f.data.points} from={mapFrom} to={cur.date} total={mapCount} scope={`${f.data.area}-${f.data.collectedAt}`} />}
             <p className="mut" style={{ fontSize: ".8rem", margin: 0 }}>{desc}</p>
 
             <div>

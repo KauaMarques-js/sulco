@@ -1,8 +1,8 @@
 export type Lang = "en" | "pt-BR";
 const en = {
   brandTag: "EARTH IN SOUND",
-  heroTitle1: "Hear the pulse",
-  heroTitle2: "of the planet.",
+  heroTitle1: "Climate data.",
+  heroTitle2: "In sound.",
   heroLead: "SULCO turns NASA Earth science data into sound. Follow 140 years of global temperature one month per note — or listen to wildfires detected from orbit.",
   heroCta: "Start listening",
   heroNote: "Real data · NASA GISS & FIRMS",
@@ -30,7 +30,7 @@ const en = {
   climIntro: "Earth's average temperature is rising. Scientists track it as an anomaly: how much warmer or colder a month is than the 1951–1980 average.", tData: "The data", dataSplit: "The numbers come from NASA GISTEMP. The sound mapping is SULCO's own artistic choice.",
   ver5190: "SVS 5190 is updated about two weeks after each month ends and may include newer years.", videoSpeed: "NASA video speed", sonSpeed: "Sound speed", videoMissing: "No video was found in the NASA metadata.", tCaptions: "Captions and transcript", transcript: "Transcript", noTranscript: "Press Play to fill the transcript.",
   tRefs: "References and limits", limitsText: "Pitch differences are small for small changes. A global average hides regional differences. The mapping is an artistic choice, not a physical law.", tMap: "How data becomes sound", openData: "Open in Data Explorer",
-  fIntro: "Satellites detect heat from fires. NASA FIRMS lists each detection with its fire radiative power (FRP).", fNeedKey: "This experience needs a free NASA FIRMS key set on the server (FIRMS_MAP_KEY). See .env.example.", fValid: "Status: in validation. Check the results against the NASA visualization (SVS 5113) before relying on them.",
+  fIntro: "Satellites detect heat from fires. NASA FIRMS lists each detection with its fire radiative power (FRP).", fNeedKey: "This experience needs a free NASA FIRMS key set on the server (FIRMS_MAP_KEY). See .env.example.", fValid: "Data: NASA FIRMS. The sonification’s correspondence with SVS 5113 is still being validated.",
   fArea: "Area", areaMT: "Mato Grosso (rectangle)", areaBR: "Brazil (rectangle)", areaWorld: "World", fEnd: "Last day", fDays: "Days", fSat: "Satellites", satBoth: "SNPP + NOAA-21", satSnpp: "SNPP", satNoaa: "NOAA-21", fLoad: "Load data", fRoll: "5-day rolling window (like NASA's visualization)",
   fCount: "Detections", fFrp: "Mean FRP (MW)", fFrpSum: "Total FRP (MW)", fMapText: "Each day is one step. Pitch follows the day's mean FRP (low to high, log scale across the selected period). The number of pulses follows the number of detections. Detections are not fire size or intensity.",
   fBox: "The area is a rectangle, not state borders. Near-real-time data covers recent days only. Days without detections are not filled in.", fCollected: "Collected", fNoData: "No detections were returned for this selection.",
@@ -50,8 +50,7 @@ const en = {
   exWhat: "Each month since 1880 becomes a musical note. Warmer months sound higher.", s1: "NASA visualization", s2: "Choose a period", s3: "Listen and watch", seeSound: "See the sound", soundSettings: "Jump to a month", readMore: "Read more",
   pitchLow: "Low pitch", pitchMid: "Medium pitch", pitchHigh: "High pitch", dataTitle: "Data Explorer", dataSub: "Look at the numbers behind the sound.", showTable: "Show data table", details: "Details", accPageTitle: "Accessibility features", accPageSub: "Everything SULCO does to be usable by more people.",
 
-  navLabel: "Main", navHome: "Home", navDiscover: "Discover Earth", navExp: "Experiences", navData: "Data Explorer", navAbout: "About", navAccess: "Accessibility Center",
-  discoverTitle: "Discover Earth", discoverIntro: "Earth systems we want to explore. Only items marked Available use verified NASA data.",
+  navLabel: "Main", navHome: "Home", navExp: "Experiences", navData: "Data Explorer", navAbout: "About", navAccess: "Accessibility Center",
   stAvailable: "Available", stValidating: "In validation", stDev: "Coming soon",
   cats: { climate: "Climate", wildfires: "Wildfires", air: "Air Quality", ghg: "Greenhouse Gases", oceans: "Oceans", water: "Water", sealevel: "Sea Level", biodiversity: "Biodiversity", energy: "Energy", disasters: "Natural Disasters" } as Record<string, string>,
   catsDesc: { climate: "How global temperature has changed since 1880.", wildfires: "Where and when fires burn.", air: "Pollutants in the air we breathe.", ghg: "Gases that trap heat.", oceans: "Temperature and changes of the seas.", water: "Rain, rivers and groundwater.", sealevel: "How high the oceans stand.", biodiversity: "Life on land and sea.", energy: "Energy and the planet.", disasters: "Storms, floods and other hazards." } as Record<string, string>,
@@ -100,8 +99,8 @@ const en = {
 export type Dict = typeof en;
 const pt: Dict = {
   brandTag: "A TERRA EM SOM",
-  heroTitle1: "Ouça o pulso",
-  heroTitle2: "do planeta.",
+  heroTitle1: "Dados do clima.",
+  heroTitle2: "Em som.",
   heroLead: "O SULCO transforma dados de ciência da Terra da NASA em som. Acompanhe 140 anos de temperatura global, um mês por nota — ou escute incêndios detectados em órbita.",
   heroCta: "Começar a ouvir",
   heroNote: "Dados reais · NASA GISS e FIRMS",
@@ -129,7 +128,7 @@ const pt: Dict = {
   climIntro: "A temperatura média da Terra está subindo. Os cientistas a acompanham como anomalia: quanto um mês está mais quente ou mais frio que a média de 1951–1980.", tData: "Os dados", dataSplit: "Os números vêm do GISTEMP da NASA. O mapeamento para som é uma escolha artística do SULCO.",
   ver5190: "O SVS 5190 é atualizado cerca de duas semanas após o fim de cada mês e pode incluir anos mais novos.", videoSpeed: "Velocidade do vídeo da NASA", sonSpeed: "Velocidade do som", videoMissing: "Nenhum vídeo foi encontrado nos metadados da NASA.", tCaptions: "Legendas e transcrição", transcript: "Transcrição", noTranscript: "Aperte Tocar para preencher a transcrição.",
   tRefs: "Referências e limites", limitsText: "Variações pequenas geram diferenças de altura pequenas. A média global esconde diferenças regionais. O mapeamento é uma escolha artística, não uma lei física.", tMap: "Como o dado vira som", openData: "Abrir no Explorador de dados",
-  fIntro: "Satélites detectam o calor dos incêndios. O NASA FIRMS lista cada detecção com sua potência radiativa do fogo (FRP).", fNeedKey: "Esta experiência precisa de uma chave gratuita do NASA FIRMS definida no servidor (FIRMS_MAP_KEY). Veja o .env.example.", fValid: "Situação: em validação. Confira os resultados com a visualização da NASA (SVS 5113) antes de confiar neles.",
+  fIntro: "Satélites detectam o calor dos incêndios. O NASA FIRMS lista cada detecção com sua potência radiativa do fogo (FRP).", fNeedKey: "Esta experiência precisa de uma chave gratuita do NASA FIRMS definida no servidor (FIRMS_MAP_KEY). Veja o .env.example.", fValid: "Dados: NASA FIRMS. A correspondência da sonificação com a visualização SVS 5113 ainda está em validação.",
   fArea: "Área", areaMT: "Mato Grosso (retângulo)", areaBR: "Brasil (retângulo)", areaWorld: "Mundo", fEnd: "Último dia", fDays: "Dias", fSat: "Satélites", satBoth: "SNPP + NOAA-21", satSnpp: "SNPP", satNoaa: "NOAA-21", fLoad: "Carregar dados", fRoll: "Janela móvel de 5 dias (como na visualização da NASA)",
   fCount: "Detecções", fFrp: "FRP médio (MW)", fFrpSum: "FRP total (MW)", fMapText: "Cada dia é um passo. A altura segue o FRP médio do dia (do grave ao agudo, escala logarítmica no período escolhido). O número de pulsos segue o número de detecções. Detecções não medem o tamanho nem a intensidade do fogo.",
   fBox: "A área é um retângulo, não as divisas do estado. Os dados quase em tempo real cobrem só os últimos dias. Dias sem detecções não são preenchidos.", fCollected: "Coletado em", fNoData: "Nenhuma detecção foi retornada para esta seleção.",
@@ -149,8 +148,7 @@ const pt: Dict = {
   exWhat: "Cada mês desde 1880 vira uma nota musical. Meses mais quentes soam mais agudos.", s1: "Visualização da NASA", s2: "Escolha um período", s3: "Ouça e acompanhe", seeSound: "Veja o som", soundSettings: "Ir para um mês", readMore: "Ler mais",
   pitchLow: "Som grave", pitchMid: "Som médio", pitchHigh: "Som agudo", dataTitle: "Explorador de dados", dataSub: "Veja os números por trás do som.", showTable: "Mostrar tabela de dados", details: "Detalhes", accPageTitle: "Recursos de acessibilidade", accPageSub: "Tudo o que o SULCO faz para ser usado por mais pessoas.",
 
-  navLabel: "Principal", navHome: "Início", navDiscover: "Descobrir a Terra", navExp: "Experiências", navData: "Explorador de dados", navAbout: "Sobre", navAccess: "Central de acessibilidade",
-  discoverTitle: "Descobrir a Terra", discoverIntro: "Sistemas da Terra que queremos explorar. Só os itens marcados como Disponível usam dados verificados da NASA.",
+  navLabel: "Principal", navHome: "Início", navExp: "Experiências", navData: "Explorador de dados", navAbout: "Sobre", navAccess: "Central de acessibilidade",
   stAvailable: "Disponível", stValidating: "Em validação", stDev: "Em breve",
   cats: { climate: "Clima", wildfires: "Incêndios", air: "Qualidade do ar", ghg: "Gases de efeito estufa", oceans: "Oceanos", water: "Água", sealevel: "Nível do mar", biodiversity: "Biodiversidade", energy: "Energia", disasters: "Desastres naturais" },
   catsDesc: { climate: "Como a temperatura global mudou desde 1880.", wildfires: "Onde e quando o fogo queima.", air: "Poluentes no ar que respiramos.", ghg: "Gases que retêm calor.", oceans: "Temperatura e mudanças dos mares.", water: "Chuva, rios e águas subterrâneas.", sealevel: "A altura dos oceanos.", biodiversity: "A vida em terra e no mar.", energy: "Energia e o planeta.", disasters: "Tempestades, enchentes e outros perigos." },

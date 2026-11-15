@@ -11,7 +11,7 @@ export function parseFirms(text: string): { rows: Detection[]; skipped: number; 
   const rows: Detection[] = []; let skipped = 0; const versions = new Set<string>();
   for (const l of L.slice(1)) {
     const c = l.split(","); const frp = Number(c[i.f]), lat = Number(c[i.la]), lon = Number(c[i.lo]);
-    if (!/^\d{4}-\d{2}-\d{2}$/.test(c[i.d] ?? "") || !Number.isFinite(frp) || frp < 0 || !Number.isFinite(lat) || !Number.isFinite(lon)) { skipped++; continue; }
+    if ([i.f, i.la, i.lo].some((n) => !(c[n] ?? "").trim()) || !/^\d{4}-\d{2}-\d{2}$/.test(c[i.d] ?? "") || !Number.isFinite(frp) || frp < 0 || !Number.isFinite(lat) || Math.abs(lat) > 90 || !Number.isFinite(lon) || Math.abs(lon) > 180) { skipped++; continue; }
     rows.push({ date: c[i.d], frp, lat, lon }); if (i.v >= 0 && c[i.v]) versions.add(c[i.v].trim());
   }
   return { rows, skipped, versions: [...versions] };
@@ -28,5 +28,19 @@ export function rolling(days: Day[], w: number): Day[] {
     const inW = days.filter((x) => dayNum(x.date) <= dayNum(d.date) && dayNum(x.date) > dayNum(d.date) - w);
     const count = inW.reduce((s, x) => s + x.count, 0), frpSum = inW.reduce((s, x) => s + x.frpSum, 0);
     return { date: d.date, count, frpSum, frpMean: frpSum / count, lon: inW.reduce((s, x) => s + x.lon * x.count, 0) / count };
+  });
+}
+
+/** Map-only sample, spread across every observed day; daily totals always use all rows. */
+export function sampleDetections(rows: Detection[], limit = 2000): Detection[] {
+  if (limit <= 0 || !Number.isInteger(limit)) return [];
+  if (rows.length <= limit) return rows;
+  const groups = new Map<string, Detection[]>();
+  for (const r of rows) { const group = groups.get(r.date) ?? []; group.push(r); groups.set(r.date, group); }
+  const days = [...groups.values()];
+  const quota = Math.floor(limit / days.length);
+  return days.flatMap((day, d) => {
+    const n = Math.min(day.length, quota + (d < limit % days.length ? 1 : 0));
+    return Array.from({ length: n }, (_, i) => day[Math.floor(i * day.length / n)]);
   });
 }

@@ -24,7 +24,6 @@ export default function Footer() {
             <li><Link href="/experiences/climate">{d.expTitles.climate}</Link></li>
             <li><Link href="/experiences/fires">{d.expTitles.wildfires}</Link></li>
             <li><Link href="/data">{d.navData}</Link></li>
-            <li><Link href="/discover">{d.navDiscover}</Link></li>
           </ul>
         </div>
         <div>

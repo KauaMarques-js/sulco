@@ -1,30 +1,28 @@
 # Estado do SULCO
 
-Trabalho solicitado por Kaua Marques na branch `feat/nasa-discover-earth`: integrar APIs reais ao Descobrir Terra, melhorar a interface e validar a implementação usando as orientações do plugin https://github.com/KauaMarques-js/plugin-CODEX (commit consultado: `851633f3bcfe3708fde3d632069f082f8bdc462e`).
+Branch: `feat/nasa-discover-earth`. A main não foi alterada. Orientações de engenharia consultadas no plugin do usuário: https://github.com/KauaMarques-js/plugin-CODEX (commit `851633f3bcfe3708fde3d632069f082f8bdc462e`).
 
-## Implementado
+## Pedidos e decisões atuais
 
-- Descobrir Terra: EONET v3 (eventos abertos, últimos 30 dias, até 100) e EPIC (imagem mais recente disponível), sem chave, com consultas independentes e falhas explícitas.
-- Painel responsivo, busca por título/local, filtro por categoria e links para os registros originais. Datas e limites da consulta visíveis; títulos originais preservados.
-- Clima: consulta automática à fonte NASA, JSON para o cliente e reserva local identificada quando indisponível. A fonte NASA continua publicando a tabela em CSV por HTTP.
-- FIRMS: integração oficial existente preservada; correções para datas inexistentes, dias fracionários e nomes inválidos de área/satélite.
-- Testes de contrato e integração usam respostas sintéticas explicitamente isoladas dos dados exibidos no produto.
+- Trabalhar na branch de funcionalidade e publicar mudanças para revisão antes de qualquer merge na main.
+- Usar dados reais e deixar a interface mais direta e dinâmica.
+- Retirar Descobrir Terra: somente Experiências reúne as ferramentas. `/discover` redireciona; navegação, categorias sem ferramenta e integrações EONET/EPIC foram removidas.
+- Integrar primeiro `origin/api-key-map`: pull realizado com merge `ce0ca23`, preservando o trabalho em andamento. A branch trouxe configuração de ambiente, não um dataset numérico. Credenciais permanecem em arquivos locais ignorados pelo Git; o exemplo versionado tem valor vazio. A chave que já constava no histórico da outra branch precisa ser substituída pelo responsável.
 
-## Limites preservados
+## Funcionamento
 
-O sucesso técnico da API não valida correspondência científica nem vínculo com o Earth Information Center. Status do catálogo e mapeamentos de sonificação permanecem iguais. EONET não substitui medições FIRMS. A chave FIRMS continua necessária em `.env.local`; não foi criada nem incluída no código.
+- Clima: NASA GISS GISTEMP v4 consultado por HTTP, com reserva local identificada. A variante atual SVS 5190 permite toda a série disponível; a variante 5057 continua limitada a 2022. Seleção por período, gráfico e linha do tempo controla o mesmo registro e sua nota. O catálogo mostra o gráfico dos dados carregados.
+- Queimadas: NASA FIRMS autenticado no servidor. `/api/nasa/fires/availability` informa as datas publicadas de SNPP e NOAA-21. Sem data manual, a interface consulta até a data mais recente comum aos produtos selecionados, apresentada na tela; não presume que a data do calendário tenha registros disponíveis.
+- Mapa: OpenStreetMap como base, coordenadas reais FIRMS. Mostra o dia selecionado ou sua janela móvel de cinco dias e informa o tamanho da amostra. Amostragem de até 2.000 pontos para o mapa; totais e sonificação usam todos os registros. Coordenadas acessíveis em tabela.
+- Gráficos permitem selecionar o registro sem iniciar áudio automaticamente. Animação de onda respeita movimento reduzido.
 
-Branch de entrega: `feat/nasa-discover-earth`, renomeada a pedido do usuário para descrever a funcionalidade. Sem merge na main. A versão do `package-lock.json`, já atualizada antes deste trabalho, foi mantida em sincronia com o `package.json`.
+## Limites
 
-## Evidências de verificação
+Detecções não equivalem a número de incêndios únicos ou perímetros queimados. FRP é potência radiativa, em MW. Status científico e mapeamentos de sonificação foram preservados; validar correspondência com SVS 5113 segue pendente. A disponibilidade de dados da NASA pode estar atrasada em relação ao calendário.
 
-- `npm test`: parsers, reprodução, seleção, FIRMS e novos testes das APIs aprovados.
-- `npm run build`: compilação de produção, checagem de tipos e geração de páginas aprovadas em cópia isolada para evitar concorrência com o servidor de desenvolvimento.
-- Chrome/Playwright: 37 eventos reais carregados na consulta de teste, imagem EPIC carregada, busca sem resultados e troca EN/PT funcionando; viewport de 390 px sem transbordamento horizontal e nenhum erro JavaScript de página observado.
-- FIRMS: contrato testado com respostas sintéticas. Consulta autenticada real pendente de configurar `FIRMS_MAP_KEY`.
+## Evidências
 
-## Evolução das experiências
-
-Pedido posterior: melhorar as experiências. Catálogo com identidade visual por tema e guia de escuta; estúdios com acesso direto ao player, navegação por registro, linha do tempo operável por teclado e duração aproximada. Clima com atalhos de período e resumo da seleção. Queimadas com orientação inicial e acesso à configuração da chave. Player informa falha de áudio e respeita movimento reduzido na animação do canvas. Dados, status científicos e mapeamentos sonoros foram preservados.
-
-Verificação: `npm test`, checagem TypeScript e build de produção aprovados. Chrome/Playwright verificou catálogo, série climática local real, atalhos, navegação por teclado, reprodução/pausa/parada, velocidade, movimento reduzido, layout de 390 px, aviso de chave FIRMS e erro de áudio. O player de queimadas foi exercitado com resposta sintética apenas no teste; nenhuma medição fictícia foi adicionada ao produto.
+- Testes automatizados de parser, player, seleção e APIs aprovados, incluindo disponibilidade, coordenadas inválidas, amostragem, sigilo da chave nas respostas e reserva local.
+- Checagem TypeScript e build de produção aprovados em cópia isolada.
+- Consulta autenticada real SNPP em Mato Grosso: 602 detecções e 602 coordenadas, de 2026-10-29 a 2026-11-02. A consulta anterior até 2026-11-15 havia retornado vazia; o endpoint de disponibilidade identificou a data publicada correta. Esses valores são evidência da sessão, não constantes do produto.
+- Chrome/Playwright, com APIs reais e sem mocks: 6.594 detecções na consulta inicial combinada de 2026-10-24 a 2026-11-02, amostra de 1.961 pontos no mapa, e 1.762 meses GISTEMP obtidos remotamente. Verificados redirecionamento de `/discover`, catálogo com duas experiências, disponibilidade, agregação, mapa e tiles, seleção por teclado/gráfico, áudio, layout móvel e ausência da chave em dados/requisições do cliente. Nenhum erro JavaScript de página observado.

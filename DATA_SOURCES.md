@@ -33,7 +33,7 @@ A relação de cada visualização com o NASA Earth Information Center (EIC) vem
 | Acesso | API de área, só no servidor (`/api/nasa/fires`), janelas de até 5 dias por requisição |
 | Chave de API | **Sim**: MAP_KEY gratuita em `FIRMS_MAP_KEY` (ver `.env.example`). Nunca no navegador |
 | Data de obtenção | Registrada em cada resposta (`collectedAt`) e versão do dado (`versions`) |
-| Limitações | Área é um retângulo (não divisa de estado); contagem de detecções não mede tamanho nem intensidade; dias sem detecção não são preenchidos; não confirmado se os parâmetros da API (limite de dias, formato) estão atuais |
+| Limitações | Área é um retângulo (não divisa de estado); contagem de detecções não mede tamanho nem intensidade; dias sem detecção não são preenchidos; a disponibilidade temporal é consultada antes da carga inicial |
 | Janela temporal | Opção de janela móvel de 5 dias, para se aproximar da visualização 5113 (conferir) |
 | Sonificação (escolha do SULCO) | 1 dia = 1 passo; altura (220–880 Hz, escala log no período) = FRP médio; nº de pulsos (1–6) = nº de detecções |
 | Para validar | Com a chave, comparar contagens e datas com a visualização 5113 e com o site do FIRMS antes de marcar como Available |
@@ -43,16 +43,15 @@ SVS 5101 (Sea Surface Temperature, near real time). Dataset, acesso numérico, u
 
 ## Observações
 - SVS API fornece metadados e links de mídia, não os dados numéricos. GIBS fornece imagens/mapas, não dados para sonificação. Não são misturados.
-- Os IDs 40529, 40531, 40477, 40479 e 5101 aparecem apenas como referência em Discover Earth ("não verificada").
+- Referências ainda não verificadas não são apresentadas como experiências prontas.
 
-## Integrações de descoberta (EONET e EPIC)
+## Consultas e disponibilidade
 
-`GET /api/nasa/discover` consulta duas APIs públicas sem chave:
+A página Descobrir Terra foi retirada a pedido do usuário. `/discover` redireciona para `/experiences`; a integração EONET/EPIC não faz mais parte do produto.
 
-- **EONET v3**: eventos abertos nos últimos 30 dias, limitados a 100 registros. A interface mostra a observação pontual mais recente de cada evento; geometrias sem ponto válido são ignoradas e contabilizadas em `skipped`. Um resultado vazio é diferente de uma falha. Não é um inventário completo de desastres e não substitui dados FIRMS. Documentação: https://eonet.gsfc.nasa.gov/docs/v3
-- **EPIC**: imagem em cores naturais da data mais recente disponível no DSCOVR. A data da fotografia aparece na interface; não é imagem ao vivo. Documentação: https://epic.gsfc.nasa.gov/about/api
+`GET /api/nasa/fires/availability` consulta o endpoint oficial `data_availability/csv/[MAP_KEY]/ALL`, filtrando os produtos VIIRS SNPP e NOAA-21. A interface usa a data mais recente comum aos satélites selecionados quando o usuário não informa outra data, e exibe essa data antes da consulta. A disponibilidade pode estar atrasada em relação ao calendário. Documentação: https://firms.modaps.eosdis.nasa.gov/api/data_availability
 
-As consultas são independentes: a indisponibilidade de um serviço não impede o outro. Cache de até 15 minutos para eventos e uma hora para metadados de imagem. Nenhum status científico do catálogo ou vínculo com o EIC foi alterado por essas integrações.
+O mapa usa OpenStreetMap como base e coordenadas FIRMS como detecções. Até 2.000 pontos são amostrados, distribuídos pelos dias do intervalo; o limite e a quantidade exibida são informados na tela. Agregações e sonificação usam todos os registros válidos. Na janela móvel, o mapa mostra as detecções do dia selecionado e dos quatro dias anteriores, restritas ao período consultado. Os pontos não representam perímetros ou número de incêndios únicos.
 
 `GET /api/nasa/gistemp` agora consulta a NASA automaticamente e retorna JSON. A fonte original continua sendo a tabela CSV oficial, obtida por HTTP; o navegador não precisa importar arquivos. Se a NASA falhar, a resposta identifica `origin: local` e `fallback: true`, com data original da cópia. `?source=remote` exige consulta remota sem cache e falha explicitamente quando indisponível; `?source=local` usa a cópia local.
 

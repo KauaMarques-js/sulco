@@ -4,7 +4,7 @@ import type { Row } from "../lib/gistemp";
  * Monthly anomaly line chart. Rendered as a client-side SVG (no chart library):
  * area gradient, zero reference, axis ticks and a live cursor for the player.
  */
-export default function LineChart({ rows, idx, desc }: { rows: Row[]; idx?: number; desc: string }) {
+export default function LineChart({ rows, idx, desc, onSelect }: { rows: Row[]; idx?: number; desc: string; onSelect?: (index: number) => void }) {
   if (rows.length < 2) return null;
   const W = 1000, H = 300;
   const M = { l: 48, r: 16, t: 26, b: 32 };
@@ -26,7 +26,11 @@ export default function LineChart({ rows, idx, desc }: { rows: Row[]; idx?: numb
 
   return (
     <div className="chart-wrap">
-      <svg viewBox={`0 0 ${W} ${H}`} role="img" aria-label={desc}>
+      <svg viewBox={`0 0 ${W} ${H}`} role="img" aria-label={desc} onClick={onSelect ? (e) => {
+        const bounds = e.currentTarget.getBoundingClientRect();
+        const x = (e.clientX - bounds.left) / bounds.width * W;
+        onSelect(Math.max(0, Math.min(rows.length - 1, Math.round((x - M.l) / (W - M.l - M.r) * (rows.length - 1)))));
+      } : undefined} style={onSelect ? { cursor: "crosshair" } : undefined}>
         <defs>
           <linearGradient id="line-area" x1="0" y1="0" x2="0" y2="1">
             <stop offset="0" stopColor="#7fe7ff" stopOpacity=".32" />

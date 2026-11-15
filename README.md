@@ -35,7 +35,7 @@ and honest about what the data does *not* say.
 - **Data Explorer** — filter any period, inspect every value, download the exact slice you heard as CSV.
 - **Accessibility Center** — high contrast, reduced motion, text scaling, larger targets, focus ring,
   captions/transcript, live announcements and optional VLibras (Libras) support.
-- **NASA APIs** — Discover Earth queries EONET events and EPIC imagery without API keys. Climate queries NASA automatically, with an explicitly identified local backup when unavailable.
+- **NASA APIs** — Climate queries NASA automatically with an identified local backup. Wildfires checks FIRMS product availability before querying satellite detections; the map follows the selected day.
 - **Local backup** — GISTEMP is committed under `public/data/climate`; climate playback remains available when NASA cannot be reached.
 
 ## Quick start
@@ -97,7 +97,7 @@ scripts/update-data  dataset refresh with SHA-256 provenance
 ```
 
 Server routes proxy NASA so API keys stay server-side: `/api/nasa/gistemp`, `/api/nasa/fires`,
-`/api/nasa/climate-spiral`, and `/api/nasa/discover`. FIRMS returns CSV upstream; these routes expose JSON to the UI.
+`/api/nasa/climate-spiral`, and `/api/nasa/fires/availability`. FIRMS returns CSV upstream; these routes expose JSON to the UI.
 
 ## Deploy
 
@@ -110,3 +110,5 @@ Data and visualizations: **NASA GISS** (GISTEMP v4), **NASA FIRMS** (VIIRS), **N
 Visualization Studio** (SVS 5057 / 5190 / 5113). Public data, used under NASA's media guidelines.
 
 SULCO is an independent project. It is **not** a partnership with, nor approved or endorsed by, NASA.
+
+The former `/discover` page redirects to `/experiences`. Experiences contains the climate and wildfire tools; exploratory categories have been removed from navigation.

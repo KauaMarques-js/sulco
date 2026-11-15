@@ -1,4 +1,4 @@
-import { AREAS, SOURCES, parseFirms, aggregateDaily } from "../../../../lib/firms.ts";
+import { AREAS, SOURCES, parseFirms, aggregateDaily, sampleDetections } from "../../../../lib/firms.ts";
 import { fetchText, SourceError } from "../../../../lib/nasa/fetchText.ts";
 export const dynamic = "force-dynamic";
 const iso = (t: number) => new Date(t * 864e5).toISOString().slice(0, 10);
@@ -21,7 +21,7 @@ export async function GET(req: Request) {
       const p = parseFirms(body); all.push(...p.rows); skipped += p.skipped; p.versions.forEach((v) => versions.add(v));
     }
     return Response.json({ source: "NASA FIRMS", products: SOURCES[sat], area, bbox: AREAS[area], start: iso(end - days + 1), end: endStr, collectedAt: new Date().toISOString(),
-      versions: [...versions], detections: all.length, skipped, unit: "MW (FRP)", days: aggregateDaily(all) });
+      versions: [...versions], detections: all.length, skipped, unit: "MW (FRP)", points: sampleDetections(all), days: aggregateDaily(all) });
   } catch (e) {
     const se = e instanceof SourceError ? e : null;
     const dev = process.env.NODE_ENV !== "production";
