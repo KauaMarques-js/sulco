@@ -5,6 +5,7 @@ import LineChart from "./LineChart";
 import FiresChart from "./FiresChart";
 import ErrBox from "./ErrBox";
 import { FiresControls, useFires } from "./FiresControls";
+import { numFmt } from "../lib/format";
 import { Icon } from "./Icons";
 
 function save(name: string, text: string) {
@@ -19,11 +20,16 @@ export default function DataExplorer() {
   const { lang, d, data, dataErr, loadData } = useApp();
   const [ds, setDs] = useState<"climate" | "fires">("climate"), [y1, setY1] = useState(0), [y2, setY2] = useState(0), [tbl, setTbl] = useState(false);
   const f = useFires();
-  const nf = (v: number, n = 2) => v.toLocaleString(lang, { minimumFractionDigits: n, maximumFractionDigits: n });
+  const nf = (v: number, n = 2) => numFmt(lang, n).format(v);
   useEffect(() => { if (data) { setY1(data.firstYear); setY2(data.lastYear); } }, [data]);
   const sel = useMemo(() => (data ? data.rows.filter((r) => r.year >= y1 && r.year <= y2) : []), [data, y1, y2]);
-  const mn = sel.length ? Math.min(...sel.map((r) => r.anomaly)) : 0, mx = sel.length ? Math.max(...sel.map((r) => r.anomaly)) : 0, avg = sel.length ? sel.reduce((s, r) => s + r.anomaly, 0) / sel.length : 0;
-  const desc = sel.length ? d.chartDesc(sel[0].year, sel[sel.length - 1].year, nf(mn), nf(mx), nf(avg)) : "";
+  const stats = useMemo(() => {
+    let mn = Infinity, mx = -Infinity, sum = 0;
+    for (const r of sel) { if (r.anomaly < mn) mn = r.anomaly; if (r.anomaly > mx) mx = r.anomaly; sum += r.anomaly; }
+    return sel.length ? { mn, mx, avg: sum / sel.length } : { mn: 0, mx: 0, avg: 0 };
+  }, [sel]);
+  const { mn, mx, avg } = stats;
+  const desc = useMemo(() => (sel.length ? d.chartDesc(sel[0].year, sel[sel.length - 1].year, nf(mn), nf(mx), nf(avg)) : ""), [d, sel, mn, mx, avg, lang]); // eslint-disable-line react-hooks/exhaustive-deps
 
   return (
     <>

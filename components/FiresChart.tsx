@@ -1,18 +1,39 @@
-export default function FiresChart({ days, idx, desc }: { days: { date: string; count: number; frpMean: number }[]; idx?: number; desc: string }) {
-  if (!days.length) return null;
-  const W = 1000, H = 300, M = { l: 48, r: 16, t: 24, b: 34 };
-  const mc = Math.max(...days.map((x) => x.count)) || 1;
-  const mf = Math.max(...days.map((x) => x.frpMean)) || 1;
-  const bw = (W - M.l - M.r) / days.length;
-  const base = H - M.b;
-  const X = (i: number) => M.l + i * bw;
-  const YC = (v: number) => base - (v / mc) * (H - M.t - M.b);
-  const YF = (v: number) => base - (v / mf) * (H - M.t - M.b);
-  const ticks = [0.5, 1].map((f) => Math.round(mc * f));
+import { useMemo } from "react";
+
+type FireDay = { date: string; count: number; frpMean: number };
+
+/** Bars are memoised on `days`; only the highlighted bar changes during playback. */
+export default function FiresChart({ days, idx, desc }: { days: FireDay[]; idx?: number; desc: string }) {
+  const geo = useMemo(() => {
+    if (!days.length) return null;
+    const W = 1000, H = 300, M = { l: 48, r: 16, t: 24, b: 34 };
+    const mc = Math.max(...days.map((x) => x.count)) || 1;
+    const mf = Math.max(...days.map((x) => x.frpMean)) || 1;
+    const bw = (W - M.l - M.r) / days.length;
+    const base = H - M.b;
+    const X = (i: number) => M.l + i * bw;
+    const YC = (v: number) => base - (v / mc) * (H - M.t - M.b);
+    const YF = (v: number) => base - (v / mf) * (H - M.t - M.b);
+    const ticks = [0.5, 1].map((f) => Math.round(mc * f));
+    const barW = Math.max(2, bw - Math.min(4, bw * 0.35));
+    const bars = days.map((x, i) => ({
+      key: x.date,
+      x: X(i) + (bw - barW) / 2,
+      y: YC(x.count),
+      h: Math.max(1, base - YC(x.count)),
+      w: barW,
+      rx: Math.min(3, barW / 2),
+    }));
+    const frp = days.map((x, i) => `${X(i) + bw / 2},${YF(x.frpMean)}`).join(" ");
+    return { W, H, M, ticks, YC, bars, frp };
+  }, [days]);
+
+  if (!geo) return null;
+  const active = idx !== undefined && idx >= 0 && idx < days.length ? geo.bars[idx] : null;
 
   return (
     <div className="chart-wrap">
-      <svg viewBox={`0 0 ${W} ${H}`} role="img" aria-label={desc}>
+      <svg viewBox={`0 0 ${geo.W} ${geo.H}`} role="img" aria-label={desc}>
         <defs>
           <linearGradient id="fire-bars" x1="0" y1="0" x2="0" y2="1">
             <stop offset="0" stopColor="#7fe7ff" stopOpacity=".95" />
@@ -22,28 +43,25 @@ export default function FiresChart({ days, idx, desc }: { days: { date: string; 
             <stop offset="0" stopColor="#ffffff" />
             <stop offset="1" stopColor="#f7b56b" />
           </linearGradient>
-          <filter id="fire-glow" x="-30%" y="-30%" width="160%" height="160%">
-            <feGaussianBlur stdDeviation="5" result="b" />
-            <feMerge><feMergeNode in="b" /><feMergeNode in="SourceGraphic" /></feMerge>
-          </filter>
         </defs>
 
-        {ticks.map((t) => (
+        {geo.ticks.map((t) => (
           <g key={t}>
-            <line x1={M.l} x2={W - M.r} y1={YC(t)} y2={YC(t)} stroke="rgba(255,255,255,.055)" strokeDasharray="4 6" />
-            <text x={M.l - 10} y={YC(t) + 4} textAnchor="end" fill="#6b7690" fontSize="11" fontFamily="ui-monospace, monospace">{t}</text>
+            <line x1={geo.M.l} x2={geo.W - geo.M.r} y1={geo.YC(t)} y2={geo.YC(t)} stroke="rgba(255,255,255,.055)" strokeDasharray="4 6" />
+            <text x={geo.M.l - 10} y={geo.YC(t) + 4} textAnchor="end" fill="#6b7690" fontSize="11" fontFamily="ui-monospace, monospace">{t}</text>
           </g>
         ))}
 
-        {days.map((x, i) => {
-          const w = Math.max(2, bw - Math.min(4, bw * 0.35));
-          return <rect key={x.date} x={X(i) + (bw - w) / 2} width={w} y={YC(x.count)} height={Math.max(1, base - YC(x.count))} rx={Math.min(3, w / 2)} fill={i === idx ? "url(#fire-bars-hi)" : "url(#fire-bars)"} filter={i === idx ? "url(#fire-glow)" : undefined} />;
-        })}
+        {geo.bars.map((b) => (
+          <rect key={b.key} x={b.x} width={b.w} y={b.y} height={b.h} rx={b.rx} fill="url(#fire-bars)" />
+        ))}
 
-        <polyline fill="none" stroke="#f7b56b" strokeWidth="2.4" strokeDasharray="7 5" strokeLinecap="round" points={days.map((x, i) => `${X(i) + bw / 2},${YF(x.frpMean)}`).join(" ")} />
+        {active && <rect x={active.x} width={active.w} y={active.y} height={active.h} rx={active.rx} fill="url(#fire-bars-hi)" />}
 
-        <text x={M.l} y={H - 8} fill="#6b7690" fontSize="11" fontFamily="ui-monospace, monospace">{days[0].date}</text>
-        <text x={W - M.r} y={H - 8} textAnchor="end" fill="#6b7690" fontSize="11" fontFamily="ui-monospace, monospace">{days[days.length - 1].date}</text>
+        <polyline fill="none" stroke="#f7b56b" strokeWidth="2.4" strokeDasharray="7 5" strokeLinecap="round" points={geo.frp} />
+
+        <text x={geo.M.l} y={geo.H - 8} fill="#6b7690" fontSize="11" fontFamily="ui-monospace, monospace">{days[0].date}</text>
+        <text x={geo.W - geo.M.r} y={geo.H - 8} textAnchor="end" fill="#6b7690" fontSize="11" fontFamily="ui-monospace, monospace">{days[days.length - 1].date}</text>
       </svg>
       <div className="chart-legend" aria-hidden="true">
         <span><i /> {days[0].date} → {days[days.length - 1].date}</span>

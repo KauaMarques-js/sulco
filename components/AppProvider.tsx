@@ -1,5 +1,5 @@
 "use client";
-import { createContext, useCallback, useContext, useEffect, useState, type ReactNode } from "react";
+import { createContext, useCallback, useContext, useEffect, useMemo, useState, type ReactNode } from "react";
 import { dict, type Dict, type Lang } from "../lib/i18n";
 import { DEF, type Prefs } from "../lib/prefs";
 import type { Row } from "../lib/gistemp";
@@ -44,8 +44,9 @@ export default function AppProvider({ children }: { children: ReactNode }) {
     if (w.__vl) return; w.__vl = true; const sc = document.createElement("script"); sc.src = "https://vlibras.gov.br/app/vlibras-plugin.js";
     sc.onload = () => { try { new w.VLibras!.Widget("https://vlibras.gov.br/app"); } catch {} }; document.body.appendChild(sc);
   }, [prefs.vlibras, lang]);
+  const value = useMemo<Ctx>(() => ({ lang, setLang, d: dict[lang], prefs, setPrefs, a11yOpen, setA11yOpen, data, dataErr, loadData }), [lang, prefs, a11yOpen, data, dataErr, loadData]);
   return (
-    <C.Provider value={{ lang, setLang, d: dict[lang], prefs, setPrefs, a11yOpen, setA11yOpen, data, dataErr, loadData }}>
+    <C.Provider value={value}>
       {children}
       <div suppressHydrationWarning style={{ display: prefs.vlibras && lang === "pt-BR" ? undefined : "none" }} {...({ vw: "true" } as object)} className="enabled"><div {...({ "vw-access-button": "true" } as object)} className="active"></div><div {...({ "vw-plugin-wrapper": "true" } as object)}><div className="vw-plugin-top-wrapper"></div></div></div>
     </C.Provider>
