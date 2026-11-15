@@ -18,7 +18,7 @@ export async function GET(req: Request) {
     for (const src of SOURCES[sat]) for (let off = 0; off < days; off += 5) { // FIRMS: janelas curtas por requisição
       const n = Math.min(5, days - off), start = end - days + 1 + off;
       const { body } = await fetchText(`https://firms.modaps.eosdis.nasa.gov/api/area/csv/${key}/${src}/${AREAS[area]}/${n}/${iso(start)}`, "text/csv,*/*", 3600);
-      const p = parseFirms(body); all.push(...p.rows); skipped += p.skipped; p.versions.forEach((v) => versions.add(v));
+      const p = parseFirms(body); for (const r of p.rows) all.push(r); skipped += p.skipped; p.versions.forEach((v) => versions.add(v));
     }
     return Response.json({ source: "NASA FIRMS", products: SOURCES[sat], area, bbox: AREAS[area], start: iso(end - days + 1), end: endStr, collectedAt: new Date().toISOString(),
       versions: [...versions], detections: all.length, skipped, unit: "MW (FRP)", days: aggregateDaily(all) });
