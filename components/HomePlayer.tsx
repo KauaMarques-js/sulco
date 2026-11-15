@@ -3,6 +3,7 @@ import { useEffect, useMemo } from "react";
 import { useApp } from "./AppProvider";
 import { usePlayback } from "./usePlayback";
 import { climateFreq } from "../lib/audio/mapping";
+import { numFmt } from "../lib/format";
 import { Icon } from "./Icons";
 import type { Row } from "../lib/gistemp";
 
@@ -33,7 +34,7 @@ export default function HomePlayer() {
   const active = pb.playing || pb.idx > 0;
   const months = lang === "pt-BR" ? MONTHS_PT : MONTHS_EN;
   const freq = cur ? climateFreq(cur.anomaly) : null;
-  const fmt = (v: number) => v.toLocaleString(lang, { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+  const fmt = (v: number) => numFmt(lang, 2).format(v);
   const range = rows.length ? `${rows[0].year}—${rows[rows.length - 1].year}` : "1880—2026";
   const label = pb.playing ? d.pause : d.listenNow;
 

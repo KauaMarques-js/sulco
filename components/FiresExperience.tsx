@@ -2,6 +2,7 @@
 import Link from "next/link";
 import { useMemo, useState } from "react";
 import { rolling, type Day } from "../lib/firms";
+import { numFmt } from "../lib/format";
 import { useApp } from "./AppProvider";
 import { usePlayback } from "./usePlayback";
 import { FiresControls, useFires } from "./FiresControls";
@@ -15,7 +16,7 @@ export default function FiresExperience() {
   const { lang, d, prefs } = useApp();
   const f = useFires();
   const [roll, setRoll] = useState(true), [live, setLive] = useState(""), [tr, setTr] = useState<string[]>([]);
-  const nf = (v: number, n = 1) => v.toLocaleString(lang, { maximumFractionDigits: n });
+  const nf = (v: number, n = 1) => numFmt(lang, 0, n).format(v);
 
   const items = useMemo<Item[]>(() => {
     if (!f.data || !f.data.days.length) return [];

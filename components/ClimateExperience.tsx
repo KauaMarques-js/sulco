@@ -23,8 +23,11 @@ export default function ClimateExperience() {
   const [y1, setY1] = useState(0), [y2, setY2] = useState(0), [live, setLive] = useState(""), [tr, setTr] = useState<string[]>([]), [vspeed, setVspeed] = useState(0.5);
   const [mediaErr, setMediaErr] = useState(false);
   const video = useRef<HTMLVideoElement>(null);
-  const nf = (v: number) => v.toLocaleString(lang, { minimumFractionDigits: 2, maximumFractionDigits: 2 });
-  const mname = (m: number) => new Date(2000, m - 1, 1).toLocaleString(lang, { month: "long" });
+  // Intl.NumberFormat/Date reuse: criar um formatador por render (ou por nota) era caro.
+  const numFmt = useMemo(() => new Intl.NumberFormat(lang, { minimumFractionDigits: 2, maximumFractionDigits: 2 }), [lang]);
+  const monthNames = useMemo(() => Array.from({ length: 12 }, (_, i) => new Date(2000, i, 1).toLocaleString(lang, { month: "long" })), [lang]);
+  const nf = (v: number) => numFmt.format(v);
+  const mname = (m: number) => monthNames[m - 1];
   const loadMeta = (id: number) => { setMetaErr(null); setMeta(null); setMediaErr(false); getJson<Meta>(`/api/nasa/climate-spiral?id=${id}`).then(setMeta).catch(setMetaErr); };
   useEffect(() => { loadMeta(svsId); }, [svsId]);
   useEffect(() => { if (video.current) video.current.playbackRate = vspeed; }, [vspeed, meta]);
@@ -41,10 +44,20 @@ export default function ClimateExperience() {
   });
   useEffect(() => { setTr([]); }, [sel]);
   const cur = sel[Math.min(pb.idx, sel.length - 1)], freq = cur ? climateFreq(cur.anomaly) : null;
-  const fr = sel.map((r) => climateFreq(r.anomaly)).filter((v): v is number => v !== null), fmin = Math.min(...fr), fmax = Math.max(...fr);
-  const pos = freq === null ? 0.5 : (freq - fmin) / (fmax - fmin || 1);
-  const mn = sel.length ? Math.min(...sel.map((r) => r.anomaly)) : 0, mx = sel.length ? Math.max(...sel.map((r) => r.anomaly)) : 1, avg = sel.length ? sel.reduce((s, r) => s + r.anomaly, 0) / sel.length : 0;
-  const desc = sel.length ? d.chartDesc(sel[0].year, sel[sel.length - 1].year, nf(mn), nf(mx), nf(avg)) : "";
+  // Uma única passada por seleção; antes eram 4 varreduras de ~1.700 linhas a cada tick.
+  const stats = useMemo(() => {
+    let mn = Infinity, mx = -Infinity, sum = 0, fmin = Infinity, fmax = -Infinity;
+    for (const r of sel) {
+      const a = r.anomaly, f = climateFreq(a);
+      if (a < mn) mn = a; if (a > mx) mx = a; sum += a;
+      if (f !== null) { if (f < fmin) fmin = f; if (f > fmax) fmax = f; }
+    }
+    if (!sel.length) return { mn: 0, mx: 1, avg: 0, fmin: 0, fmax: 0 };
+    return { mn, mx, avg: sum / sel.length, fmin, fmax };
+  }, [sel]);
+  const { mn, mx, avg, fmin, fmax } = stats;
+  const pos = freq === null || fmax === fmin ? 0.5 : (freq - fmin) / (fmax - fmin || 1);
+  const desc = useMemo(() => (sel.length ? d.chartDesc(sel[0].year, sel[sel.length - 1].year, nf(mn), nf(mx), nf(avg)) : ""), [d, sel, mn, mx, avg, lang]); // eslint-disable-line react-hooks/exhaustive-deps
   const years = useMemo(() => [...new Set(sel.map((r) => r.year))], [sel]);
   const goTo = (year: number, month: number) => {
     const k = indexFor(sel, year, month); if (k < 0) { setLive(d.noRecord); return; } pb.seek(k); const r = sel[k];

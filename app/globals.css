@@ -96,7 +96,8 @@ body::before {
     radial-gradient(48% 42% at 18% 8%, rgba(34, 184, 224, 0.18), transparent 62%),
     radial-gradient(40% 38% at 82% 2%, rgba(139, 108, 255, 0.16), transparent 60%),
     radial-gradient(34% 34% at 60% 46%, rgba(255, 168, 94, 0.07), transparent 70%);
-  filter: blur(12px);
+  /* sem filter: os gradientes já são suaves e o blur em tela cheia obrigava
+     o navegador a repintar uma camada fixa de 120vh a cada rolagem */
   pointer-events: none;
   z-index: -1;
 }
@@ -305,10 +306,10 @@ input:focus-visible, select:focus-visible { outline: 2px solid var(--cy); outlin
   align-items: center;
   gap: 1.1rem;
   padding: 0.7rem clamp(1rem, 4vw, 2.5rem);
-  background: rgba(5, 6, 11, 0.72);
+  background: rgba(5, 6, 11, 0.82);
   border-bottom: 1px solid var(--line);
-  backdrop-filter: blur(18px) saturate(140%);
-  -webkit-backdrop-filter: blur(18px) saturate(140%);
+  backdrop-filter: blur(12px) saturate(130%);
+  -webkit-backdrop-filter: blur(12px) saturate(130%);
 }
 html.hc .top { background: #000; }
 .brand { display: inline-flex; align-items: center; gap: 0.65rem; font-weight: 720; letter-spacing: 0.26em; font-size: 0.92rem; color: var(--tx); text-decoration: none; }
@@ -347,7 +348,7 @@ html.hc .top { background: #000; }
 
 /* vinyl disc ---------------------------------------------------------- */
 .disc-stage { position: relative; display: grid; place-items: center; min-height: 380px; }
-.disc-halo { position: absolute; width: min(100%, 470px); aspect-ratio: 1; border-radius: 50%; background: radial-gradient(circle, rgba(127, 231, 255, 0.14), transparent 62%); filter: blur(26px); }
+.disc-halo { position: absolute; width: min(100%, 470px); aspect-ratio: 1; border-radius: 50%; background: radial-gradient(circle, rgba(127, 231, 255, 0.14), transparent 62%); }
 .disc {
   position: relative;
   width: min(100%, 400px);
@@ -374,6 +375,8 @@ html.hc .top { background: #000; }
   background: repeating-radial-gradient(circle at 50% 50%, rgba(255, 255, 255, 0.055) 0 1px, transparent 1px 5px);
   mask: radial-gradient(circle, transparent 31%, #000 32%);
   animation: spin 26s linear infinite;
+  will-change: transform;
+  transform: translateZ(0);
 }
 .disc::after {
   content: "";
