@@ -44,3 +44,16 @@ SVS 5101 (Sea Surface Temperature, near real time). Dataset, acesso numérico, u
 ## Observações
 - SVS API fornece metadados e links de mídia, não os dados numéricos. GIBS fornece imagens/mapas, não dados para sonificação. Não são misturados.
 - Os IDs 40529, 40531, 40477, 40479 e 5101 aparecem apenas como referência em Discover Earth ("não verificada").
+
+## Integrações de descoberta (EONET e EPIC)
+
+`GET /api/nasa/discover` consulta duas APIs públicas sem chave:
+
+- **EONET v3**: eventos abertos nos últimos 30 dias, limitados a 100 registros. A interface mostra a observação pontual mais recente de cada evento; geometrias sem ponto válido são ignoradas e contabilizadas em `skipped`. Um resultado vazio é diferente de uma falha. Não é um inventário completo de desastres e não substitui dados FIRMS. Documentação: https://eonet.gsfc.nasa.gov/docs/v3
+- **EPIC**: imagem em cores naturais da data mais recente disponível no DSCOVR. A data da fotografia aparece na interface; não é imagem ao vivo. Documentação: https://epic.gsfc.nasa.gov/about/api
+
+As consultas são independentes: a indisponibilidade de um serviço não impede o outro. Cache de até 15 minutos para eventos e uma hora para metadados de imagem. Nenhum status científico do catálogo ou vínculo com o EIC foi alterado por essas integrações.
+
+`GET /api/nasa/gistemp` agora consulta a NASA automaticamente e retorna JSON. A fonte original continua sendo a tabela CSV oficial, obtida por HTTP; o navegador não precisa importar arquivos. Se a NASA falhar, a resposta identifica `origin: local` e `fallback: true`, com data original da cópia. `?source=remote` exige consulta remota sem cache e falha explicitamente quando indisponível; `?source=local` usa a cópia local.
+
+A API oficial FIRMS também entrega CSV por HTTP, convertido pelo servidor em JSON. A MAP_KEY gratuita permanece obrigatória e exclusiva do servidor. Documentação dos intervalos de 1–5 dias: https://firms.modaps.eosdis.nasa.gov/api/area

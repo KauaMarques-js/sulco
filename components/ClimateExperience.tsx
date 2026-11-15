@@ -122,6 +122,7 @@ export default function ClimateExperience() {
           </div>
           <Link className="btn" href="/data"><Icon name="data" size={16} /> {d.openData}</Link>
         </div>
+        {data?.fallback && <p role="status" className="warn">{d.apiFallback}</p>}
         {data && <div className="pill-row" style={{ marginTop: "1.1rem" }}><span className="chip">{data.dataset}</span><span className="chip">{data.units}</span><span className="chip">{data.baseline}</span><span className="chip">{data.firstYear}–{data.lastYear}</span></div>}
       </section>
 

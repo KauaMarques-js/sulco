@@ -35,7 +35,8 @@ and honest about what the data does *not* say.
 - **Data Explorer** — filter any period, inspect every value, download the exact slice you heard as CSV.
 - **Accessibility Center** — high contrast, reduced motion, text scaling, larger targets, focus ring,
   captions/transcript, live announcements and optional VLibras (Libras) support.
-- **Offline-first data** — GISTEMP is committed under `public/data/climate`; the app works without NASA being reachable.
+- **NASA APIs** — Discover Earth queries EONET events and EPIC imagery without API keys. Climate queries NASA automatically, with an explicitly identified local backup when unavailable.
+- **Local backup** — GISTEMP is committed under `public/data/climate`; climate playback remains available when NASA cannot be reached.
 
 ## Quick start
 
@@ -96,7 +97,7 @@ scripts/update-data  dataset refresh with SHA-256 provenance
 ```
 
 Server routes proxy NASA so API keys stay server-side: `/api/nasa/gistemp`, `/api/nasa/fires`,
-`/api/nasa/climate-spiral`.
+`/api/nasa/climate-spiral`, and `/api/nasa/discover`. FIRMS returns CSV upstream; these routes expose JSON to the UI.
 
 ## Deploy
 

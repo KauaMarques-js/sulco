@@ -1,5 +1,5 @@
-import { AREAS, SOURCES, parseFirms, aggregateDaily } from "../../../../lib/firms";
-import { fetchText, SourceError } from "../../../../lib/nasa/fetchText";
+import { AREAS, SOURCES, parseFirms, aggregateDaily } from "../../../../lib/firms.ts";
+import { fetchText, SourceError } from "../../../../lib/nasa/fetchText.ts";
 export const dynamic = "force-dynamic";
 const iso = (t: number) => new Date(t * 864e5).toISOString().slice(0, 10);
 
@@ -9,9 +9,9 @@ export async function GET(req: Request) {
   const q = new URL(req.url).searchParams;
   const area = q.get("area") ?? "mt", sat = q.get("sat") ?? "both", days = Math.min(30, Math.max(1, Number(q.get("days") ?? 10)));
   const today = Math.floor(Date.now() / 864e5), endStr = q.get("end") ?? iso(today);
-  if (!AREAS[area] || !SOURCES[sat] || !/^\d{4}-\d{2}-\d{2}$/.test(endStr) || !Number.isFinite(days)) return Response.json({ error: "invalid_params" }, { status: 400 });
+  if (!Object.hasOwn(AREAS, area) || !Object.hasOwn(SOURCES, sat) || !/^\d{4}-\d{2}-\d{2}$/.test(endStr) || !Number.isInteger(days)) return Response.json({ error: "invalid_params" }, { status: 400 });
   const end = Math.floor(Date.parse(endStr + "T00:00:00Z") / 864e5);
-  if (!Number.isFinite(end) || end > today) return Response.json({ error: "invalid_params", message: "Data final inválida." }, { status: 400 });
+  if (!Number.isFinite(end) || iso(end) !== endStr || end > today) return Response.json({ error: "invalid_params", message: "Data final inválida." }, { status: 400 });
   const scrub = (s: string) => s.split(key).join("***");
   try {
     const all = []; let skipped = 0; const versions = new Set<string>();

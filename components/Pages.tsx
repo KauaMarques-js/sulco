@@ -4,6 +4,7 @@ import { useMemo } from "react";
 import { useApp } from "./AppProvider";
 import Badge from "./Badge";
 import HomePlayer from "./HomePlayer";
+import EarthObservatory from "./EarthObservatory";
 import { Icon, type IconName } from "./Icons";
 import { CATALOG, type Exp } from "../lib/eic/catalog";
 import { CATS } from "../lib/eic/categories";
@@ -209,6 +210,8 @@ export function Discover() {
       <p className="eyebrow">{d.navDiscover}</p>
       <h1>{d.discoverTitle}</h1>
       <p className="lead">{d.discoverIntro}</p>
+      <EarthObservatory />
+      <div className="section-head" style={{ marginTop: "3rem" }}><h2>{d.navExp}</h2></div>
       <ul className="tiles" style={{ marginTop: "2rem" }}>
         {CATS.map((c) => (
           <li key={c.k}>

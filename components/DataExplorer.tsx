@@ -53,7 +53,7 @@ export default function DataExplorer() {
             <span className="chip">{d.stored}: {new Date(data.fetchedAt).toLocaleDateString(lang)}</span>
             {data.sha256 && <span className="chip mono" title={data.sha256}>{d.sha}: {data.sha256.slice(0, 12)}…</span>}
           </div>
-          <p className="mut" style={{ fontSize: ".85rem" }}>{d.staleNote} <a href={data.source} target="_blank" rel="noopener">{d.source} <Icon name="external" size={11} style={{ display: "inline", verticalAlign: "-1px" }} /></a></p>
+          <p className="mut" style={{ fontSize: ".85rem" }}>{data.fallback ? d.apiFallback : d.staleNote} <a href={data.source} target="_blank" rel="noopener">{d.source} <Icon name="external" size={11} style={{ display: "inline", verticalAlign: "-1px" }} /></a></p>
           <p style={{ fontSize: ".9rem" }}><strong>{d.missingT}:</strong>{" "}
             {data.skippedMissing === 0 ? d.noneMissing : `${data.skippedMissing} (${(data.missing ?? []).slice(0, 24).map((m) => `${m.year}-${String(m.month).padStart(2, "0")}`).join(", ")}${data.skippedMissing > 24 ? "…" : ""})`}
           </p>
