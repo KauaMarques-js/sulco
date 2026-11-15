@@ -64,6 +64,7 @@ export function usePlayback<T>(items: T[], cb: CB<T>, reducedMotion = false) {
   };
   return {
     idx, setIdx, playing, audioError, speed, setSpeed, vol, setVol, cv,
+    prepare: ensure,
     play: async () => { const id = ++action.current; if (await ensure() && id === action.current) P.current?.play(); },
     pause: () => { action.current++; P.current?.pause(); E.current?.cancel(); },
     stop: () => { action.current++; P.current?.stop(); E.current?.cancel(); setIdx(0); },

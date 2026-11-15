@@ -1,0 +1,12 @@
+[
+  {
+    "name": "unavailable-audio",
+    "passed": true,
+    "fixture": true
+  },
+  {
+    "name": "unsupported-frequency",
+    "passed": true,
+    "fixture": true
+  }
+]

@@ -1,0 +1,123 @@
+
+> sulco@1.0.0 test
+> npm run test:parser && npm run test:player && npm run test:select && npm run test:firms && npm run test:api && npm run test:oceans && npm run test:performance && npm run test:svs && npm run test:audio && npm run test:comparison
+
+
+> sulco@1.0.0 test:parser
+> node --experimental-strip-types test/parser.test.ts
+
+(node:23203) [MODULE_TYPELESS_PACKAGE_JSON] Warning: Module type of file:///Users/gabriellymarques/sulco/test/parser.test.ts is not specified and it doesn't parse as CommonJS.
+Reparsing as ES module because module syntax was detected. This incurs a performance overhead.
+To eliminate this warning, add "type": "module" to /Users/gabriellymarques/sulco/package.json.
+(Use `node --trace-warnings ...` to show where the warning was created)
+OK parser 23 1
+0 °C: 440 Hz | 1.0 °C: 523.3 Hz | -0.5 °C: 403.5 Hz
+
+> sulco@1.0.0 test:player
+> node --experimental-strip-types test/player.test.ts
+
+(node:23218) [MODULE_TYPELESS_PACKAGE_JSON] Warning: Module type of file:///Users/gabriellymarques/sulco/test/player.test.ts is not specified and it doesn't parse as CommonJS.
+Reparsing as ES module because module syntax was detected. This incurs a performance overhead.
+To eliminate this warning, add "type": "module" to /Users/gabriellymarques/sulco/package.json.
+(Use `node --trace-warnings ...` to show where the warning was created)
+OK   pause para e mantém a posição
+OK   retomada continua do próximo índice, sem repetir
+OK   stop zera a posição
+OK   stop cancela eventos pendentes
+OK   restart começa do primeiro evento
+OK   troca de velocidade não duplica sequências
+OK   fim da sequência chama onEnd uma vez
+OK   play duplo não cria dois timers
+OK   mapeamento: 0→440, +4→880, inválidos→null
+OK   mapeamento monotônico
+
+> sulco@1.0.0 test:select
+> node --experimental-strip-types test/select.test.ts
+
+(node:23245) [MODULE_TYPELESS_PACKAGE_JSON] Warning: Module type of file:///Users/gabriellymarques/sulco/test/select.test.ts is not specified and it doesn't parse as CommonJS.
+Reparsing as ES module because module syntax was detected. This incurs a performance overhead.
+To eliminate this warning, add "type": "module" to /Users/gabriellymarques/sulco/package.json.
+(Use `node --trace-warnings ...` to show where the warning was created)
+OK   março de 1990 aponta para o registro de março de 1990
+OK   frequência vem do mesmo registro selecionado
+OK   mês inexistente no ano em andamento usa o mais próximo do mesmo ano
+OK   ano fora do intervalo → -1
+OK   mês inválido → -1
+
+> sulco@1.0.0 test:firms
+> node --experimental-strip-types test/firms.test.ts
+
+(node:23259) [MODULE_TYPELESS_PACKAGE_JSON] Warning: Module type of file:///Users/gabriellymarques/sulco/test/firms.test.ts is not specified and it doesn't parse as CommonJS.
+Reparsing as ES module because module syntax was detected. This incurs a performance overhead.
+To eliminate this warning, add "type": "module" to /Users/gabriellymarques/sulco/package.json.
+(Use `node --trace-warnings ...` to show where the warning was created)
+OK   parser: 3 válidas, 2 inválidas ignoradas, versão registrada
+OK   agregação diária: contagem, FRP médio e soma separados
+OK   janela móvel de 5 dias soma detecções e FRP
+OK   resposta que não é CSV gera erro
+
+> sulco@1.0.0 test:api
+> node --experimental-strip-types test/api.test.ts
+
+(node:23274) [MODULE_TYPELESS_PACKAGE_JSON] Warning: Module type of file:///Users/gabriellymarques/sulco/test/api.test.ts is not specified and it doesn't parse as CommonJS.
+Reparsing as ES module because module syntax was detected. This incurs a performance overhead.
+To eliminate this warning, add "type": "module" to /Users/gabriellymarques/sulco/package.json.
+(Use `node --trace-warnings ...` to show where the warning was created)
+OK API: FIRMS availability, invalid coordinates, map sampling, private key, query dates, remote climate and explicit fallback
+
+> sulco@1.0.0 test:oceans
+> node --experimental-strip-types test/oceans.test.ts
+
+(node:23290) [MODULE_TYPELESS_PACKAGE_JSON] Warning: Module type of file:///Users/gabriellymarques/sulco/test/oceans.test.ts is not specified and it doesn't parse as CommonJS.
+Reparsing as ES module because module syntax was detected. This incurs a performance overhead.
+To eliminate this warning, add "type": "module" to /Users/gabriellymarques/sulco/package.json.
+(Use `node --trace-warnings ...` to show where the warning was created)
+✔ parseErddapSstCsv skips ERDDAP units row, NaNs, and invalid lines without gap-filling (4.762186ms)
+✔ parseErddapSstCsv rejects unexpected CSV headers (0.778701ms)
+✔ aggregateDailySst computes chronological mean/min/max without inventing missing days (0.669859ms)
+✔ oceanFreq maps min/mid/max SST across 220..880 Hz and guards edge cases (0.613154ms)
+✔ missing numeric cells, impossible dates and invalid coordinates are never invented as zero (1.07261ms)
+ℹ tests 5
+ℹ suites 0
+ℹ pass 5
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 27.949407
+
+> sulco@1.0.0 test:performance
+> node --experimental-strip-types test/performance.test.ts
+
+(node:23304) [MODULE_TYPELESS_PACKAGE_JSON] Warning: Module type of file:///Users/gabriellymarques/sulco/test/performance.test.ts is not specified and it doesn't parse as CommonJS.
+Reparsing as ES module because module syntax was detected. This incurs a performance overhead.
+To eliminate this warning, add "type": "module" to /Users/gabriellymarques/sulco/package.json.
+(Use `node --trace-warnings ...` to show where the warning was created)
+OK performance: concurrent request deduplication, TTL cache, explicit bypass, bounded concurrency, deterministic output, no caching of errors and no 403 retry
+
+> sulco@1.0.0 test:svs
+> node --experimental-strip-types test/svs.test.ts
+
+(node:23318) [MODULE_TYPELESS_PACKAGE_JSON] Warning: Module type of file:///Users/gabriellymarques/sulco/test/svs.test.ts is not specified and it doesn't parse as CommonJS.
+Reparsing as ES module because module syntax was detected. This incurs a performance overhead.
+To eliminate this warning, add "type": "module" to /Users/gabriellymarques/sulco/package.json.
+(Use `node --trace-warnings ...` to show where the warning was created)
+OK SVS: prose without download inventory, structured credits, malformed metadata, entities, original media preserved
+
+> sulco@1.0.0 test:audio
+> node --experimental-strip-types test/audio.test.ts
+
+(node:23332) [MODULE_TYPELESS_PACKAGE_JSON] Warning: Module type of file:///Users/gabriellymarques/sulco/test/audio.test.ts is not specified and it doesn't parse as CommonJS.
+Reparsing as ES module because module syntax was detected. This incurs a performance overhead.
+To eliminate this warning, add "type": "module" to /Users/gabriellymarques/sulco/package.json.
+(Use `node --trace-warnings ...` to show where the warning was created)
+OK audio: pause/stop cancels current and future notes, cancellation is repeatable, playback can start again
+
+> sulco@1.0.0 test:comparison
+> node --experimental-strip-types test/comparison.test.ts
+
+(node:23346) [MODULE_TYPELESS_PACKAGE_JSON] Warning: Module type of file:///Users/gabriellymarques/sulco/test/comparison.test.ts is not specified and it doesn't parse as CommonJS.
+Reparsing as ES module because module syntax was detected. This incurs a performance overhead.
+To eliminate this warning, add "type": "module" to /Users/gabriellymarques/sulco/package.json.
+(Use `node --trace-warnings ...` to show where the warning was created)
+OK comparison: complete years, no gap filling or duplicate months, equal periods, independent means, fixed audio mapping, real GISTEMP 1880–1889 / 2016–2025

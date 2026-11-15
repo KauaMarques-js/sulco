@@ -89,6 +89,13 @@ export default function ClimateExperience() {
 
 
 
+      <section className="card comparison-entry" aria-labelledby="comparison-entry-title">
+        <div><p className="eyebrow">{lang === "pt-BR" ? "Uma descoberta pelo som" : "A discovery through sound"}</p>
+          <h2 id="comparison-entry-title">{lang === "pt-BR" ? "Como dois períodos soam?" : "How do two periods sound?"}</h2>
+          <p>{lang === "pt-BR" ? "Ouça anos antigos e recentes na mesma escala e compare os valores por trás das notas." : "Hear earlier and recent years on the same scale and compare the values behind the notes."}</p></div>
+        <Link className="btn pri" href="/experiences/climate/compare">{lang === "pt-BR" ? "Comparar períodos pelo som" : "Compare periods through sound"}</Link>
+      </section>
+
       <section id="experience-studio" className="card studio-filters" aria-labelledby="c3">
         <div className="section-head" style={{ marginBottom: "1rem" }}>
           <div><p className="eyebrow">{d.period}</p><h2 id="c3" style={{ margin: 0 }}>{d.s2}</h2></div>

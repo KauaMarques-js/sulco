@@ -1,0 +1,25 @@
+{
+  "results": [
+    {
+      "name": "pt-desktop",
+      "overflow": false,
+      "violations": []
+    },
+    {
+      "name": "en-desktop",
+      "overflow": false,
+      "violations": []
+    },
+    {
+      "name": "pt-mobile",
+      "overflow": false,
+      "violations": []
+    },
+    {
+      "name": "pt-320-text-200",
+      "overflow": false,
+      "violations": []
+    }
+  ],
+  "errors": []
+}

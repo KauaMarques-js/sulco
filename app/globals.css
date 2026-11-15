@@ -744,3 +744,38 @@ html.hc .mut, html.hc .player-note, html.hc .swh { color: #fff; }
 .source-credits > div { margin-block: 1rem; }
 .source-credits dt { font-weight: 600; }
 .source-credits dd { margin: .3rem 0 0; color: var(--tx-soft); }
+
+/* Guided climate comparison: native controls and the same chart scale for A and B. */
+.comparison-entry { display: flex; align-items: center; justify-content: space-between; gap: 1.5rem; flex-wrap: wrap; }
+.comparison-entry p { max-width: 62ch; }
+.climate-comparison > .card { margin-block: 1.25rem; }
+.climate-comparison p { max-width: 78ch; }
+.comparison-length { max-width: 24rem; margin-block: 1rem; }
+.comparison-length label, .comparison-periods label, .comparison-settings label, .comparison-seek label { display: block; margin-bottom: .5rem; }
+.comparison-periods { border: 0; padding: 0; margin: 1rem 0; display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 1.25rem; }
+.comparison-periods > div { border: 1px solid var(--line); border-radius: 14px; padding: 1rem; min-width: 0; }
+.comparison-periods select, .comparison-length select { width: 100%; min-width: 0; }
+.comparison-actions, .comparison-controls { display: flex; flex-wrap: wrap; gap: .75rem; margin-block: 1rem; }
+.comparison-actions button[aria-pressed="true"] { border-color: var(--cy); box-shadow: inset 0 0 0 1px var(--cy); }
+.comparison-settings > div { flex: 1 1 12rem; min-width: 0; }
+.comparison-settings input, .comparison-seek input { width: 100%; }
+.comparison-status { min-height: 3em; margin-block: 1rem; }
+.comparison-seek { margin-block: 1rem; }
+.comparison-seek button { margin-top: .75rem; }
+.comparison-result { font-size: clamp(1.15rem, 2vw, 1.5rem); line-height: 1.6; }
+.comparison-chart { margin: 1.5rem 0; }
+.comparison-chart figcaption { display: grid; gap: .5rem; }
+.comparison-chart svg { display: block; width: 100%; height: auto; margin-top: 1rem; }
+.comparison-line-a, .comparison-line-b { fill: none; stroke-width: 4; }
+.comparison-line-a { stroke: #7fe7ff; }
+.comparison-line-b { stroke: #f7b56b; stroke-dasharray: 13 8; }
+.comparison-zero { stroke: var(--mut); stroke-dasharray: 5 6; }
+.comparison-axis { fill: var(--tx); font: 25px var(--font-mono); }
+.comparison-cursor { fill: var(--tx); stroke: var(--bg); stroke-width: 3; }
+.climate-comparison .scroll { max-width: 100%; }
+.climate-comparison table { min-width: 650px; }
+.climate-comparison caption { text-align: left; padding-block: 1rem; }
+@media (max-width: 600px) { .comparison-periods { grid-template-columns: 1fr; } .comparison-actions > button { width: 100%; } }
+.climate-comparison { overflow-wrap: anywhere; }
+.climate-comparison button, .comparison-entry .btn { max-width: 100%; overflow-wrap: anywhere; }
+.climate-comparison select { max-width: 100%; min-width: 0; }

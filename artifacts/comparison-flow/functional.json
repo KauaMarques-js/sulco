@@ -1,0 +1,79 @@
+{
+  "results": [
+    {
+      "name": "entry-link-stops-original-player",
+      "passed": true
+    },
+    {
+      "name": "no-autoplay",
+      "passed": true
+    },
+    {
+      "name": "real-web-audio-reference-440-hz",
+      "passed": true
+    },
+    {
+      "name": "real-data-pitch-and-completion-A",
+      "passed": true,
+      "firstYear": 1880,
+      "lastYear": 1889,
+      "notes": 10
+    },
+    {
+      "name": "real-data-pitch-and-completion-B",
+      "passed": true,
+      "firstYear": 2016,
+      "lastYear": 2025,
+      "notes": 10
+    },
+    {
+      "name": "result-independent-monthly-calculation",
+      "passed": true,
+      "delta": 1.22625
+    },
+    {
+      "name": "keyboard-only-play-pause-resume-stop-visible-focus",
+      "passed": true
+    },
+    {
+      "name": "keyboard-seek-and-hear-selected-year",
+      "passed": true
+    },
+    {
+      "name": "same-year-same-frequency-across-A-and-B",
+      "passed": true
+    },
+    {
+      "name": "immediate-stop-prevents-pending-play",
+      "passed": true
+    },
+    {
+      "name": "speech-contract-and-cancellation",
+      "passed": true,
+      "fixture": true
+    },
+    {
+      "name": "changing-periods-cancels-sound",
+      "passed": true
+    },
+    {
+      "name": "english-flow",
+      "passed": true
+    },
+    {
+      "name": "leaving-comparison-stops-audio-and-speech",
+      "passed": true
+    },
+    {
+      "name": "source-error-and-retry",
+      "passed": true,
+      "fixture": true
+    },
+    {
+      "name": "incomplete-data-never-generates-a-comparison",
+      "passed": true,
+      "fixture": true
+    }
+  ],
+  "errors": []
+}

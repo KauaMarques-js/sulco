@@ -1,0 +1,35 @@
+import assert from "node:assert/strict";
+import { readFileSync } from "node:fs";
+import { completeAnnualMeans, periodStarts, compareClimate } from "../lib/data/compareClimate.ts";
+import { climateFreq } from "../lib/audio/mapping.ts";
+import { parseGistemp } from "../lib/gistemp.ts";
+const year = (y: number, value: number) => Array.from({ length: 12 }, (_, k) => ({ year: y, month: k + 1, anomaly: value }));
+const rows = [...year(1880, -0.4), ...year(1881, -0.2), ...year(2024, 1), ...year(2025, 1.2), ...year(2026, 2).slice(0, 10)];
+const annual = completeAnnualMeans(rows.reverse());
+assert.deepEqual(annual.map(r => r.year), [1880, 1881, 2024, 2025]);
+assert(Math.abs(annual[0].anomaly + 0.4) < 1e-12);
+assert.deepEqual(periodStarts(annual, 2), [1880, 2024]);
+assert.deepEqual(periodStarts(annual, 3), []);
+assert.deepEqual(periodStarts(annual, 1.5), []);
+const model = compareClimate(annual, 1880, 2024, 2);
+assert.equal(model.a.years.length, model.b.years.length);
+assert(Math.abs(model.delta - 1.4) < 1e-12);
+assert.equal(model.overlap, false);
+assert(Math.abs(compareClimate(annual, 2024, 1880, 2).delta + model.delta) < 1e-12);
+assert.equal(compareClimate(annual, 1880, 1880, 2).delta, 0);
+assert.equal(compareClimate(annual, 1880, 1880, 2).overlap, true);
+assert.throws(() => compareClimate(annual, 1881, 2024, 2), RangeError);
+assert.equal(completeAnnualMeans([...year(2000, 1), ...year(2000, 1).slice(0, 1)]).length, 0);
+assert.equal(completeAnnualMeans([...year(2000, 1).slice(0, 11), { year: 2000, month: 12, anomaly: NaN }]).length, 0);
+assert.equal(climateFreq(0), 440);
+assert.equal(climateFreq(model.a.years[0].anomaly), climateFreq(compareClimate(annual, 1880, 1880, 2).b.years[0].anomaly));
+const published = parseGistemp(readFileSync(new URL('../public/data/climate/gistemp_monthly.csv', import.meta.url), 'utf8')).rows;
+const full = completeAnnualMeans(published), starts = periodStarts(full, 10);
+const real = compareClimate(full, starts[0], starts.at(-1)!, 10);
+for (const p of [real.a, real.b]) {
+  const monthly = published.filter(r => r.year >= p.start && r.year <= p.end);
+  assert.equal(monthly.length, 120);
+  assert(Math.abs(p.mean - monthly.reduce((s, r) => s + r.anomaly, 0) / monthly.length) < 1e-12);
+  assert(p.years.every(r => climateFreq(r.anomaly) !== null));
+}
+console.log(`OK comparison: complete years, no gap filling or duplicate months, equal periods, independent means, fixed audio mapping, real GISTEMP ${real.a.start}–${real.a.end} / ${real.b.start}–${real.b.end}`);
