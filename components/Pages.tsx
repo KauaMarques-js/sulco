@@ -22,7 +22,7 @@ const ICON: Record<string, IconName> = {
   disasters: "storm",
 };
 const HAS_PAGE = ["climate", "fires", "oceans"];
-const DEVELOPERS = ["Arthur Loni", "Carlos Eduardo", "Kauan Marques", "Adrielly Andrade"];
+const DEVELOPERS = ["Arthur Loni", "Carlos Eduardo", "Kaua Marques", "Adrielly Andrade"];
 
 const icon = (slug: string): IconName => ICON[slug] ?? "globe";
 
@@ -37,7 +37,7 @@ function ExpTile({ e, studio = false, latest }: { e: Exp; studio?: boolean; late
       <Badge st={e.status} />
       <h3>{d.expTitles[e.key]}</h3>
       <p>{d.expDesc[e.key]}</p>
-      {studio && <div className="studio-card-meta"><span>{e.slug === "climate" ? (lang === "pt-BR" ? "1 mês = 1 nota" : "1 month = 1 note") : e.slug === "fires" ? (lang === "pt-BR" ? "1 dia = 1 passo" : "1 day = 1 step") : (lang === "pt-BR" ? "1 dia = 1 nota" : "1 day = 1 note")}</span><span>{e.apiKey ? (lang === "pt-BR" ? "Requer chave FIRMS" : "Requires FIRMS key") : e.slug === "climate" ? (lang === "pt-BR" ? "Sem chave de API" : "No API key needed") : "NOAA CoastWatch"}</span></div>}
+      {studio && <div className="studio-card-meta"><span>{e.slug === "climate" ? (lang === "pt-BR" ? "1 mês = 1 nota" : "1 month = 1 note") : e.slug === "fires" ? (lang === "pt-BR" ? "1 dia = 1 passo" : "1 day = 1 step") : (lang === "pt-BR" ? "1 dia = 1 nota" : "1 day = 1 note")}</span><span>{e.slug === "fires" ? "NASA FIRMS / VIIRS" : e.slug === "climate" ? "NASA GISS" : "NOAA CoastWatch"}</span></div>}
       <div className="tile-foot">
         {open ? <>{d.openExp} <Icon name="arrow" size={16} /></> : <span className="mut">{d.stValidating}</span>}
       </div>
@@ -253,10 +253,9 @@ export function About() {
         </section>
 
         <section className="section" aria-labelledby="lc">
-          <div className="section-head"><div><p className="eyebrow">{d.tRefs}</p><h2 id="lc">{d.aboutLimitsTitle}</h2></div></div>
+          <div className="section-head"><div><p className="eyebrow">{d.navExp}</p><h2 id="lc">{d.aboutExperiencesTitle}</h2></div></div>
           <div className="card">
-            <p>{d.aboutLimits}</p>
-            <p className="warn" style={{ marginBottom: 0 }}>{d.aboutDisclaimer}</p>
+            <p>{d.aboutExperiences}</p>
           </div>
         </section>
 
@@ -298,7 +297,7 @@ export function About() {
             ))}
           </ul>
           <p className="mut" style={{ marginTop: "1.2rem", fontSize: ".85rem" }}>
-            NASA Scientific Visualization Studio · NASA GISS · NASA FIRMS. {d.aboutDisclaimer}
+            NASA Scientific Visualization Studio · NASA GISS · NASA FIRMS · NOAA CoastWatch.
           </p>
         </section>
       </article>

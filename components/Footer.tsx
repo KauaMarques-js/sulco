@@ -39,7 +39,7 @@ export default function Footer() {
         </div>
       </div>
       <div className="foot-bottom">
-        {d.madeBy} · {d.aboutDisclaimer}
+        {d.madeBy}
       </div>
     </footer>
   );

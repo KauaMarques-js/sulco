@@ -104,11 +104,11 @@ Server routes proxy NASA so API keys stay server-side: `/api/nasa/gistemp`, `/ap
 Any Node host that supports Next.js (Vercel recommended). Set `FIRMS_MAP_KEY` in the environment.
 The climate dataset is committed, so a cold deploy still renders the full experience.
 
-## Credits & disclaimer
+## Credits
 
 Data and visualizations: **NASA GISS** (GISTEMP v4), **NASA FIRMS** (VIIRS), **NASA Scientific
 Visualization Studio** (SVS 5057 / 5190 / 5113). Public data, used under NASA's media guidelines.
 
-SULCO is an independent project. It is **not** a partnership with, nor approved or endorsed by, NASA.
+SULCO was created for the NASA Space Apps Challenge hackathon and its “The Earth Information Jukebox” challenge.
 
 The former `/discover` page redirects to `/experiences`. Experiences contains the climate and wildfire tools; exploratory categories have been removed from navigation.
