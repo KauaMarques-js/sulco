@@ -30,3 +30,7 @@ Detecções não equivalem a número de incêndios únicos ou perímetros queima
 ## Integração de desempenho e acessibilidade
 
 Integrada `api-key-map` até `993e92e` na branch de trabalho `feat/nasa-discover-earth`, preservando mapa, recorte temporal FIRMS e navegação simplificada. Inclui oceanos, cache/concorrência e recursos de acessibilidade. Conflitos resolvidos e JSON validado; servidor reiniciado com cache Next recriado após erro temporário durante o merge. `npm test` e build aprovados; páginas `/experiences`, `/experiences/oceans` e `/data` retornaram 200 no navegador, sem erros JavaScript de página. Entrega somente na branch de trabalho, sem alteração da main.
+
+## Metadados da Espiral Climática
+
+Corrigida a apresentação de metadados SVS: inventário de downloads separado por `||` é removido da descrição; créditos estruturados são normalizados para grupos de função/pessoas, com texto simples compatível com outros consumidores. Descrição original identificada como inglês para leitores de tela. Vídeos, dados e sonificação preservados. Teste `test:svs`, build de produção e reprodução do problema no navegador com o exemplo fornecido pelo usuário aprovados. Prévia local na porta 3001, com um servidor por cache Next.

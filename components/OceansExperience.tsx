@@ -392,7 +392,7 @@ export default function OceansExperience() {
                 <a href="https://svs.gsfc.nasa.gov/5101/" target="_blank" rel="noopener">
                   NASA SVS 5101 — Sea Surface Temperature (SST) - Near Real Time <Icon name="external" size={12} />
                 </a>
-                {svs?.credits && <span> · {svs.credits}</span>}
+                {svs?.credits && <span lang="en"> · {svs.credits}</span>}
               </li>
               <li>
                 <a href="https://coastwatch.noaa.gov/erddap/griddap/noaacwBLENDEDCsstDaily.html" target="_blank" rel="noopener">

@@ -1,6 +1,7 @@
 "use client";
 import Link from "next/link";
 import { useEffect, useMemo, useRef, useState } from "react";
+import type { CreditGroup } from "../lib/nasa/svs";
 import type { Row } from "../lib/gistemp";
 import { climateFreq } from "../lib/audio/mapping";
 import { indexFor } from "../lib/data/select";
@@ -13,7 +14,7 @@ import Det from "./Det";
 import PlayerTransport from "./PlayerTransport";
 import { Icon } from "./Icons";
 
-type Meta = { id: number; page: string; title: string | null; description: string | null; credits: string | null; video: string | null; image: string | null };
+type Meta = { creditGroups?: CreditGroup[]; id: number; page: string; title: string | null; description: string | null; credits: string | null; video: string | null; image: string | null };
 const strip = (s: string | null) => (s ?? "").replace(/<[^>]+>/g, "");
 const protoRelative = (u: string) => u.replace(/^https?:/i, "");
 const proxied = (u: string) => `/api/nasa/media?u=${encodeURIComponent(u)}`;
@@ -188,7 +189,13 @@ export default function ClimateExperience() {
             </label>
           )}
           <p style={{ marginTop: "1rem", marginBottom: 0 }}><strong>{meta.title}</strong>{" · "}<a href={meta.page} target="_blank" rel="noopener">NASA SVS {meta.id} <Icon name="external" size={12} style={{ display: "inline", verticalAlign: "-1px" }} /></a></p>
-          <Det summary={d.readMore}><p>{strip(meta.description)}</p>{meta.credits && <p style={{ marginBottom: 0 }}>{strip(meta.credits)}</p>}</Det>
+          <Det summary={d.readMore}>
+            {meta.description && <><p className="mut">{lang === "pt-BR" ? "Descrição original da NASA (em inglês)" : "Original NASA description"}</p><p lang="en" style={{ whiteSpace: "pre-line" }}>{strip(meta.description)}</p></>}
+            {meta.creditGroups?.length ? <dl className="source-credits">{meta.creditGroups.map((group, i) => <div key={i}>
+              <dt>{lang === "pt-BR" ? ({ Visualizer: "Visualização", "Technical support": "Apoio técnico", "Web administrator": "Administração do site" } as Record<string, string>)[group.role] ?? <span lang="en">{group.role}</span> : group.role}</dt>
+              <dd>{group.people.map((person, k) => <span key={k} lang="en">{k > 0 ? "; " : ""}{person.name}{person.employer ? ` (${person.employer})` : ""}</span>)}</dd>
+            </div>)}</dl> : meta.credits && <p lang="en">{strip(meta.credits)}</p>}
+          </Det>
         </>}
       </section>
 

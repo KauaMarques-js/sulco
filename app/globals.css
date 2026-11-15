@@ -738,3 +738,6 @@ html.hc .mut, html.hc .player-note, html.hc .swh { color: #fff; }
 .dlg { max-height: calc(100dvh - 2rem); overflow: auto; }
 @media (prefers-reduced-motion: reduce) { html { scroll-behavior: auto; } }
 .player-controls select { min-height: 44px; }
+.source-credits > div { margin-block: 1rem; }
+.source-credits dt { font-weight: 600; }
+.source-credits dd { margin: .3rem 0 0; color: var(--tx-soft); }
