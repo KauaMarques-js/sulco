@@ -43,7 +43,6 @@ export default function FiresExperience() {
       <p className="eyebrow">{d.expTitles.wildfires} · NASA FIRMS</p>
       <h1>{d.expTitles.wildfires}</h1>
       <p className="lead">{d.fIntro}</p>
-      <p className="warn">{d.fValid}</p>
 
       <section className="card" aria-labelledby="f1">
         <div className="section-head" style={{ marginBottom: "1rem" }}>

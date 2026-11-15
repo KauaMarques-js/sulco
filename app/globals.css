@@ -202,16 +202,98 @@ label > select, label > input, label > .seg { margin-top: 0.45rem; }
 select {
   appearance: none;
   padding-right: 2.1rem;
+  background-color: var(--panel-solid);
   background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='14' height='14' viewBox='0 0 24 24' fill='none' stroke='%238e9ab5' stroke-width='2'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E");
   background-repeat: no-repeat;
   background-position: right 0.85rem center;
+  color: var(--tx);
+  color-scheme: dark;
   cursor: pointer;
 }
 select:hover, input:hover { border-color: rgba(255, 255, 255, 0.26); }
+select:hover { background-color: #121828; }
+select option {
+  background-color: var(--panel-solid);
+  color: var(--tx);
+}
+select option:hover,
+select option:focus {
+  background: #1b2438 linear-gradient(0deg, #1b2438 0%, #1b2438 100%);
+  color: #fff;
+}
+select option:checked {
+  background: #143242 linear-gradient(0deg, #143242 0%, #143242 100%);
+  color: var(--cy);
+  font-weight: 600;
+}
+select option:checked:hover,
+select option:checked:focus {
+  background: #194156 linear-gradient(0deg, #194156 0%, #194156 100%);
+  color: var(--cy);
+}
+@supports (appearance: base-select) {
+  select,
+  ::picker(select) {
+    appearance: base-select;
+  }
+  select {
+    display: inline-flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.65rem;
+    padding-right: 0.85rem;
+    background-image: none;
+  }
+  select::picker-icon {
+    color: var(--mut);
+    transition: transform 0.18s ease, color 0.18s ease;
+  }
+  select:open::picker-icon {
+    transform: rotate(180deg);
+    color: var(--cy);
+  }
+  ::picker(select) {
+    background: var(--panel-solid);
+    color: var(--tx);
+    border: 1px solid var(--line-strong);
+    border-radius: var(--radius-sm);
+    padding: 0.3rem;
+    margin-block: 0.3rem;
+    box-shadow: var(--shadow);
+  }
+  select option {
+    padding: 0.45rem 0.7rem;
+    border-radius: 8px;
+    background: transparent;
+    color: var(--tx-soft);
+    gap: 0.5rem;
+    cursor: pointer;
+    transition: background 0.14s ease, color 0.14s ease;
+  }
+  select option:hover,
+  select option:focus-visible {
+    background: rgba(255, 255, 255, 0.08);
+    color: var(--tx);
+    outline-offset: 0;
+  }
+  select option:checked {
+    background: rgba(127, 231, 255, 0.18);
+    color: var(--cy);
+    font-weight: 600;
+  }
+  select option:checked:hover,
+  select option:checked:focus-visible {
+    background: rgba(127, 231, 255, 0.26);
+    color: var(--cy);
+  }
+  select option::checkmark {
+    color: var(--cy);
+  }
+}
 input[type="number"] { width: 7.5rem; font-family: var(--font-mono); font-variant-numeric: tabular-nums; }
 input[type="date"] { font-family: var(--font-mono); font-size: 0.85rem; }
 input[type="range"] { width: 100%; min-height: 32px; accent-color: var(--cy); background: transparent; border: 0; padding: 0; }
-input[type="checkbox"] { accent-color: var(--cy); width: 1.25rem; height: 1.25rem; }
+input[type="checkbox"] { accent-color: var(--cy); color-scheme: dark; width: 1.25rem; height: 1.25rem; cursor: pointer; }
 input:focus-visible, select:focus-visible { outline: 2px solid var(--cy); outline-offset: 1px; border-color: transparent; }
 .row > label { flex: 0 1 auto; }
 
@@ -663,3 +745,37 @@ html.tg button, html.tg .btn, html.tg .navlink, html.tg select, html.tg input, h
 html.fx :focus-visible { outline: 5px solid #fff; box-shadow: 0 0 0 9px #000; }
 html.hc .card, html.hc .tile .viz, html.hc .steps li { background: #000; }
 html.hc .grad { -webkit-text-fill-color: #fff; color: #fff; }
+html.hc select, html.hc select option { background-color: #000; color: #fff; }
+html.hc select:hover { background-color: #141414; }
+html.hc select option:hover,
+html.hc select option:focus { background: #262626 linear-gradient(0deg, #262626 0%, #262626 100%); color: #fff; }
+html.hc select option:checked,
+html.hc select option:checked:hover,
+html.hc select option:checked:focus { background: #fff linear-gradient(0deg, #fff 0%, #fff 100%); color: #000; }
+@supports (appearance: base-select) {
+  html.tg select option { min-height: 46px; }
+  html.hc ::picker(select) { background: #000; border-color: #fff; }
+  html.hc select option { background: #000; color: #fff; }
+  html.hc select option:hover,
+  html.hc select option:focus-visible { background: #262626; color: #fff; }
+  html.hc select option:checked,
+  html.hc select option:checked:hover,
+  html.hc select option:checked:focus-visible { background: #fff; color: #000; }
+  html.hc select option::checkmark { color: #000; }
+}
+
+/* Accessibility essentials: usable without enabling an optional theme. */
+html { scroll-padding-top: 100px; }
+:root { --mut-2: #939fb9; }
+button, .btn, select, input:not([type="checkbox"]), summary { min-height: 44px; }
+input[type="checkbox"] { width: 24px; height: 24px; }
+:focus-visible { outline: 3px solid var(--cy); outline-offset: 4px; }
+html.ts1 { font-size: 120%; }
+html.ts2 { font-size: 140%; }
+html.ts1 body, html.ts2 body { font-size: 1rem; }
+html.hc .mut, html.hc .player-note, html.hc .swh { color: #fff; }
+.sign-host[hidden] { display: none !important; visibility: hidden !important; }
+.sign-error { padding: 1rem; max-width: 65ch; margin: 1rem auto; }
+.dlg { max-height: calc(100dvh - 2rem); overflow: auto; }
+@media (prefers-reduced-motion: reduce) { html { scroll-behavior: auto; } }
+.player-controls select { min-height: 44px; }

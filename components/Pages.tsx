@@ -21,7 +21,8 @@ const ICON: Record<string, IconName> = {
   energy: "bolt",
   disasters: "storm",
 };
-const HAS_PAGE = ["climate", "fires"];
+const HAS_PAGE = ["climate", "fires", "oceans"];
+const DEVELOPERS = ["Arthur Loni", "Carlos Eduardo", "Kauan Marques", "Adrielly Andrade"];
 
 const icon = (slug: string): IconName => ICON[slug] ?? "globe";
 
@@ -298,6 +299,24 @@ export function About() {
             <p>{d.aboutLimits}</p>
             <p className="warn" style={{ marginBottom: 0 }}>{d.aboutDisclaimer}</p>
           </div>
+        </section>
+
+        <section className="section" aria-labelledby="devs">
+          <div className="section-head">
+            <div>
+              <p className="eyebrow">{d.devsEyebrow}</p>
+              <h2 id="devs">{d.devsTitle}</h2>
+              <p>{d.devsIntro}</p>
+            </div>
+          </div>
+          <ul className="grid" style={{ listStyle: "none", padding: 0, margin: 0 }}>
+            {DEVELOPERS.map((name) => (
+              <li key={name} className="card" style={{ margin: 0 }}>
+                <strong style={{ display: "block", fontSize: "1.02rem", marginBottom: ".55rem" }}>{name}</strong>
+                <span className="chip">{d.devsNationality}</span>
+              </li>
+            ))}
+          </ul>
         </section>
 
         <section className="section" aria-labelledby="sc">

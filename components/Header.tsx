@@ -1,7 +1,7 @@
 "use client";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useApp } from "./AppProvider";
 import { Icon, Mark } from "./Icons";
 import type { Lang } from "../lib/i18n";
@@ -10,17 +10,17 @@ export default function Header() {
   const { d, lang, setLang, setA11yOpen } = useApp();
   const path = usePathname();
   const [open, setOpen] = useState(false);
+  const menuButton = useRef<HTMLButtonElement>(null);
   useEffect(() => { setOpen(false); }, [path]);
   const items: [string, string][] = [
     ["/", d.navHome],
-    ["/discover", d.navDiscover],
     ["/experiences", d.navExp],
     ["/data", d.navData],
     ["/about", d.navAbout],
   ];
   const active = (h: string) => (h === "/" ? path === "/" : path.startsWith(h));
   return (
-    <header className="top">
+    <header className="top" onKeyDown={(e) => { if (e.key === "Escape" && open) { e.preventDefault(); setOpen(false); menuButton.current?.focus(); } }}>
       <a className="skip" href="#main">{d.skip}</a>
       <Link href="/" className="brand" aria-label="SULCO">
         <Mark />
@@ -44,6 +44,7 @@ export default function Header() {
           <span className="lbl">{d.a11yBtn}</span>
         </button>
         <button
+          ref={menuButton}
           className="burger icon-btn"
           aria-expanded={open}
           aria-controls="mainmenu"

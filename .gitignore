@@ -9,11 +9,6 @@ out/
 build/
 next-env.d.ts
 
-# Environment
-.env
-.env*.local
-.env.production
-
 # Logs / OS
 *.log
 npm-debug.log*
@@ -26,3 +21,6 @@ Thumbs.db
 
 # Tests / coverage
 coverage/
+
+# Local credentials
+.env*.local

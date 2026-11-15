@@ -5,7 +5,7 @@
 **NASA Earth data, pressed into sound.**
 
 A sonification studio for the planet. Every month of the global temperature record becomes a note;
-every wildfire detection becomes a pulse. Built for the NASA Space Apps Challenge — *The Earth Information Jukebox*.
+every wildfire detection becomes a pulse; every day of ocean surface temperature becomes a wave. Built for the NASA Space Apps Challenge — *The Earth Information Jukebox*.
 
 `Next.js 15` · `React 19` · `TypeScript` · `Web Audio API` · no chart libraries
 
@@ -31,7 +31,8 @@ and honest about what the data does *not* say.
 
 - **Interactive record** — play a decade of monthly anomalies straight from the landing page.
 - **Climate Spiral** — a real sonification player with spiral and line views, seek, speed and volume.
-- **Wildfires (in validation)** — near-real-time VIIRS detections from NASA FIRMS, mapped to pitch and pulses.
+- **Wildfires** — near-real-time VIIRS detections from NASA FIRMS, mapped to pitch and pulses (requires `FIRMS_MAP_KEY` on the server).
+- **Oceans** — NASA SVS 5101 Sea Surface Temperature visualization paired with daily NOAA NESDIS CoastWatch ERDDAP `noaacwBLENDEDCsstDaily` (°C) across 5 ocean basins (no API key required).
 - **Data Explorer** — filter any period, inspect every value, download the exact slice you heard as CSV.
 - **Accessibility Center** — high contrast, reduced motion, text scaling, larger targets, focus ring,
   captions/transcript, live announcements and optional VLibras (Libras) support.
@@ -71,6 +72,7 @@ what is missing instead of showing substitute data.
 | 0 °C anomaly | 440 Hz (A4) |
 | Wildfire mean FRP per day | pitch on a log scale across the selected period |
 | Detections per day | number of pulses (1–6) |
+| Daily mean sea surface temperature (°C) | sine pitch (`220–880 Hz`) scaled across the active basin & period |
 
 The mapping is an **artistic choice**, not a physical law. It is documented in the UI and in
 [`DATA_SOURCES.md`](./DATA_SOURCES.md). Missing values are skipped, never interpolated.
@@ -89,14 +91,15 @@ app/                 routes, metadata, NASA proxy routes
 components/          UI, player, charts (SVG), accessibility dialog
 lib/gistemp.ts       GISTEMP CSV parser (no gap filling)
 lib/firms.ts         FIRMS CSV parser + daily aggregation
+lib/oceans.ts        NOAA CoastWatch ERDDAP SST CSV parser + daily aggregation
 lib/audio/           AudioEngine (Web Audio), Player (sequencer), mapping
 lib/eic/             experience catalog and status
 public/data/climate  committed GISTEMP copy + provenance metadata
 scripts/update-data  dataset refresh with SHA-256 provenance
 ```
 
-Server routes proxy NASA so API keys stay server-side: `/api/nasa/gistemp`, `/api/nasa/fires`,
-`/api/nasa/climate-spiral`.
+Server routes proxy NASA and NOAA so API keys stay server-side: `/api/nasa/gistemp`, `/api/nasa/fires`,
+`/api/nasa/oceans`, `/api/nasa/climate-spiral`.
 
 ## Deploy
 
@@ -105,7 +108,7 @@ The climate dataset is committed, so a cold deploy still renders the full experi
 
 ## Credits & disclaimer
 
-Data and visualizations: **NASA GISS** (GISTEMP v4), **NASA FIRMS** (VIIRS), **NASA Scientific
-Visualization Studio** (SVS 5057 / 5190 / 5113). Public data, used under NASA's media guidelines.
+Data and visualizations: **NASA GISS** (GISTEMP v4), **NASA FIRMS** (VIIRS), **NOAA NESDIS CoastWatch** (`noaacwBLENDEDCsstDaily`),
+and **NASA Scientific Visualization Studio** (SVS 5057 / 5190 / 5113 / 5101). Public data, used under NASA's media guidelines.
 
 SULCO is an independent project. It is **not** a partnership with, nor approved or endorsed by, NASA.
