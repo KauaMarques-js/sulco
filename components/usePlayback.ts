@@ -29,7 +29,7 @@ export function usePlayback<T>(items: T[], cb: CB<T>) {
     const g = c.getContext("2d"); if (!g) return;
     const W = c.width, H = c.height;
     g.clearRect(0, 0, W, H);
-    if (!playing) return;
+    if (!playing || prefs.rm || window.matchMedia?.("(prefers-reduced-motion: reduce)")?.matches) return;
     let raf = 0, last = 0;
     const loop = (now: number) => {
       raf = requestAnimationFrame(loop);
@@ -51,7 +51,7 @@ export function usePlayback<T>(items: T[], cb: CB<T>) {
     };
     raf = requestAnimationFrame(loop);
     return () => cancelAnimationFrame(raf);
-  }, [playing]);
+  }, [playing, prefs.rm]);
   const ensure = async () => { if (!E.current) E.current = new AudioEngine(); await E.current.resume(); E.current.setVolume(vol / 100); };
   return {
     idx, setIdx, playing, speed, setSpeed, vol, setVol, cv,

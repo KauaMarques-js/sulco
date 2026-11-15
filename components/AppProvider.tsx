@@ -1,5 +1,6 @@
 "use client";
 import { createContext, useCallback, useContext, useEffect, useMemo, useState, type ReactNode } from "react";
+import SignLanguages from "./SignLanguages";
 import { dict, type Dict, type Lang } from "../lib/i18n";
 import { DEF, type Prefs } from "../lib/prefs";
 import type { Row } from "../lib/gistemp";
@@ -40,12 +41,6 @@ export default function AppProvider({ children }: { children: ReactNode }) {
     getJson<Data>(remote === true ? "/api/nasa/gistemp?source=remote" : "/api/nasa/gistemp").then(setData).catch((e) => setDataErr(e));
   }, []);
   useEffect(() => { loadData(); }, [loadData]);
-  useEffect(() => { // VLibras: carregado uma única vez, quando o usuário ativa
-    if (!(prefs.vlibras && lang === "pt-BR")) return;
-    const w = window as unknown as { __vl?: boolean; VLibras?: { Widget: new (u: string) => unknown } };
-    if (w.__vl) return; w.__vl = true; const sc = document.createElement("script"); sc.src = "https://vlibras.gov.br/app/vlibras-plugin.js";
-    sc.onload = () => { try { new w.VLibras!.Widget("https://vlibras.gov.br/app"); } catch {} }; document.body.appendChild(sc);
-  }, [prefs.vlibras, lang]);
   const value = useMemo<Ctx>(() => ({ lang, setLang, d: dict[lang], prefs, setPrefs, a11yOpen, setA11yOpen, data, dataErr, loadData }), [lang, prefs, a11yOpen, data, dataErr, loadData]);
   return (
     <C.Provider value={value}>
