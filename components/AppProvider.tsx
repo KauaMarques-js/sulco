@@ -48,7 +48,7 @@ export default function AppProvider({ children }: { children: ReactNode }) {
   return (
     <C.Provider value={value}>
       {children}
-      <SignLanguages />
+      <SignLanguages ready={hydrated} />
     </C.Provider>
   );
 }

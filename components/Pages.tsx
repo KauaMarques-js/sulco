@@ -22,7 +22,7 @@ const ICON: Record<string, IconName> = {
   disasters: "storm",
 };
 const HAS_PAGE = ["climate", "fires", "oceans"];
-const DEVELOPERS = ["Arthur Loni", "Carlos Eduardo", "Kauã Marques Almeida", "Arielly Andrade", "Lucas Abreu Estrela", "Mauricio Abreu"];
+const DEVELOPERS = ["Arthur Loni", "Carlos Eduardo", "Kauã Marques Almeida", "Adrielly Andrade", "Lucas Abreu Estrela", "Mauricio Abreu"];
 
 const icon = (slug: string): IconName => ICON[slug] ?? "globe";
 

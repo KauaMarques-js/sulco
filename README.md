@@ -104,6 +104,8 @@ Server routes proxy NASA so API keys stay server-side: `/api/nasa/gistemp`, `/ap
 Any Node host that supports Next.js (Vercel recommended). Set `FIRMS_MAP_KEY` in the environment.
 The climate dataset is committed, so a cold deploy still renders the full experience.
 
+VLibras is embedded automatically in Portuguese. English uses the Hand Talk ASL widget automatically when `NEXT_PUBLIC_HANDTALK_TOKEN` is configured for the website domain with ASL enabled. Set it before building the app; restart development or rebuild the deployment after changing it. The widgets follow the selected language and do not require an accessibility-panel toggle.
+
 ## Credits
 
 Data and visualizations: **NASA GISS** (GISTEMP v4), **NASA FIRMS** (VIIRS), **NASA Scientific

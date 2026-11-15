@@ -68,7 +68,7 @@ export default function A11yDialog() {
         {sw("visual", d.swVis, d.swVisH)}
         {sw("captions", d.swCap, d.swCapH)}
         {info(d.infoVis)}
-        {lang === "pt-BR" ? sw("vlibras", "Libras · VLibras", "Traduz textos em português para Libras. Tradução automática complementar; não substitui intérprete humano.") : process.env.NEXT_PUBLIC_HANDTALK_TOKEN ? sw("asl", "American Sign Language · Hand Talk", "Translate English text into ASL. Automatic translation is complementary and does not replace a human interpreter.") : <p className="swh">ASL translation via Hand Talk requires activation for this website. Captions, transcripts and visual information are available without it.</p>}
+        {lang === "pt-BR" ? info("O botão do VLibras fica disponível automaticamente na página para tradução em Libras.") : process.env.NEXT_PUBLIC_HANDTALK_TOKEN ? info("The ASL translator is available automatically from its button on the page.") : null}
 
 
         <h3>{d.catNav}</h3>
