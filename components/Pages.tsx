@@ -26,17 +26,20 @@ const HAS_PAGE = ["climate", "fires"];
 
 const icon = (slug: string): IconName => ICON[slug] ?? "globe";
 
-function ExpTile({ e }: { e: Exp }) {
-  const { d } = useApp();
+function ExpTile({ e, studio = false }: { e: Exp; studio?: boolean }) {
+  const { d, lang } = useApp();
   const open = HAS_PAGE.includes(e.slug);
   const body = (
     <>
-      <div className="viz">
+      <div className={`viz${studio ? ` studio-art studio-art-${e.slug}` : ""}`}>
+        {studio && <span className="studio-grooves" aria-hidden="true" />}
         <Icon name={icon(e.key)} size={44} />
+        {studio && <span className="studio-art-label">{e.slug === "climate" ? "01 / GISTEMP" : e.slug === "fires" ? "02 / VIIRS" : "03 / OCEANS"}</span>}
       </div>
       <Badge st={e.status} />
       <h3>{d.expTitles[e.key]}</h3>
       <p>{d.expDesc[e.key]}</p>
+      {studio && <div className="studio-card-meta"><span>{e.slug === "climate" ? (lang === "pt-BR" ? "1 mês = 1 nota" : "1 month = 1 note") : e.slug === "fires" ? (lang === "pt-BR" ? "1 dia = 1 passo" : "1 day = 1 step") : (lang === "pt-BR" ? "Em pesquisa" : "Under research")}</span><span>{e.apiKey ? (lang === "pt-BR" ? "Requer chave FIRMS" : "Requires FIRMS key") : e.slug === "climate" ? (lang === "pt-BR" ? "Sem chave de API" : "No API key needed") : "NASA SVS"}</span></div>}
       <div className="tile-foot">
         {open ? <>{d.openExp} <Icon name="arrow" size={16} /></> : <span className="mut">{d.stValidating}</span>}
       </div>
@@ -45,8 +48,8 @@ function ExpTile({ e }: { e: Exp }) {
   return (
     <li>
       {open
-        ? <Link className="card tile hoverable" href={`/experiences/${e.slug}`}>{body}</Link>
-        : <div className="card tile dim">{body}</div>}
+        ? <Link className={`card tile hoverable${studio ? " studio-card" : ""}`} href={`/experiences/${e.slug}`}>{body}</Link>
+        : <div className={`card tile dim${studio ? " studio-card" : ""}`}>{body}</div>}
     </li>
   );
 }
@@ -245,13 +248,19 @@ export function Discover() {
 }
 
 export function Experiences() {
-  const { d } = useApp();
+  const { d, lang } = useApp();
+  const pt = lang === "pt-BR";
   return (
     <>
       <p className="eyebrow">{d.navExp}</p>
       <h1>{d.expTitle}</h1>
       <p className="lead">{d.expSub}</p>
-      <ul className="tiles" style={{ marginTop: "2rem" }}>{CATALOG.map((e) => <ExpTile key={e.slug} e={e} />)}</ul>
+      <div className="listening-guide" aria-label={pt ? "Como explorar" : "How to explore"}>{[
+        ["01", pt ? "Escolha o que ouvir" : "Choose what to hear", pt ? "Temperatura ou registros de queimadas." : "Temperature or wildfire records."],
+        ["02", pt ? "Encontre seu período" : "Find your period", pt ? "Explore os dados no seu ritmo." : "Explore the data at your own pace."],
+        ["03", pt ? "Ouça e acompanhe" : "Listen and follow", pt ? "Cada som tem um dado e uma legenda." : "Every sound has a value and a caption."],
+      ].map(([n, title, text]) => <div key={n}><span>{n}</span><div><h2>{title}</h2><p>{text}</p></div></div>)}</div>
+      <ul className="tiles studio-catalog">{CATALOG.map((e) => <ExpTile key={e.slug} e={e} studio />)}</ul>
       <div className="card" style={{ marginTop: "2rem" }}>
         <div className="note-grid">
           <div className="note"><h3>{d.officialViz}</h3><p>NASA SVS 5057 · 5190 · 5113</p></div>

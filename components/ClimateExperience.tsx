@@ -10,6 +10,8 @@ import SpiralChart from "./SpiralChart";
 import LineChart from "./LineChart";
 import ErrBox from "./ErrBox";
 import Det from "./Det";
+import PlayerTransport from "./PlayerTransport";
+import ExperienceIntro from "./ExperienceIntro";
 import { Icon } from "./Icons";
 
 type Meta = { id: number; page: string; title: string | null; description: string | null; credits: string | null; video: string | null; image: string | null };
@@ -38,7 +40,7 @@ export default function ClimateExperience() {
     note: (r, sp, e) => { const f = climateFreq(r.anomaly); if (f !== null) e.note(f, 0.135 / sp); },
     step: (r) => { setTr((t) => [...t.slice(-199), evt(r)]); if (prefs.verbose || r.month === 1) setLive(d.yearAnn(r.year, mname(r.month), nf(r.anomaly))); },
     end: () => setLive(d.ended),
-  });
+  }, prefs.rm);
   useEffect(() => { setTr([]); }, [sel]);
   const cur = sel[Math.min(pb.idx, sel.length - 1)], freq = cur ? climateFreq(cur.anomaly) : null;
   const fr = sel.map((r) => climateFreq(r.anomaly)).filter((v): v is number => v !== null), fmin = Math.min(...fr), fmax = Math.max(...fr);
@@ -60,9 +62,86 @@ export default function ClimateExperience() {
       <p>{d.climIntro}</p>
       <div className="pill-row" style={{ marginBottom: "2rem" }}>
         <span className="chip cool">NASA GISS</span>
-        <span className="chip">SVS 5057</span>
+        <span className="chip">SVS {svsId}</span>
         <span className="chip">{d.unit}: °C</span>
       </div>
+
+      <ExperienceIntro kind="climate" />
+
+      <section id="experience-studio" className="card studio-filters" aria-labelledby="c3">
+        <div className="section-head" style={{ marginBottom: "1rem" }}>
+          <div><p className="eyebrow">{d.period}</p><h2 id="c3" style={{ margin: 0 }}>{d.s2}</h2></div>
+          {data && sel.length > 0 && <div className="row">
+            <label>{d.startYear}<input type="number" value={y1} min={all[0].year} max={y2} onChange={(e) => setY1(Math.min(Math.max(+e.target.value || all[0].year, all[0].year), y2))} /></label>
+            <label>{d.endYear}<input type="number" value={y2} min={y1} max={all[all.length - 1].year} onChange={(e) => setY2(Math.max(Math.min(+e.target.value || y2, all[all.length - 1].year), y1))} /></label>
+          </div>}
+        </div>
+        {all.length > 0 && <div className="period-presets" role="group" aria-label={lang === "pt-BR" ? "Atalhos de período" : "Period shortcuts"}>{[0, 30, 10].map((n) => {
+          const start = n ? Math.max(all[0].year, all[all.length - 1].year - n + 1) : all[0].year;
+          const end = all[all.length - 1].year;
+          return <button key={n} aria-pressed={y1 === start && y2 === end} onClick={() => { setY1(start); setY2(end); }}>{n ? (lang === "pt-BR" ? `Últimos ${n} anos` : `Last ${n} years`) : (lang === "pt-BR" ? "Todo o período" : "Full record")}</button>;
+        })}</div>}
+        {!data && !dataErr && <p role="status">{d.loading}</p>}
+        {dataErr && <ErrBox d={d} f={dataErr} msg={d.failData} retry={() => loadData()} />}
+      </section>
+
+      {data && sel.length > 0 && cur && <section className="card" aria-labelledby="c4">
+        <h2 id="c4" className="sr">{d.s3}</h2>
+        <div className="studio-summary"><div><span>{d.period}</span><strong>{y1}–{y2}</strong></div><div><span>{d.statMonths}</span><strong>{sel.length.toLocaleString(lang)}</strong></div><div><span>{lang === "pt-BR" ? "Menor anomalia" : "Lowest anomaly"}</span><strong>{nf(mn)} °C</strong></div><div><span>{lang === "pt-BR" ? "Maior anomalia" : "Highest anomaly"}</span><strong>{nf(mx)} °C</strong></div></div>
+        <div className="player">
+          <div className="player-top">
+            <div className="player-readout">
+              <p className="eyebrow" style={{ margin: 0 }}>{d.s3}</p>
+              <span className="when">{mname(cur.month)} <span>{cur.year}</span></span>
+              <div className="player-chips">
+                <span className="chip warm">{cur.anomaly > 0 ? "+" : ""}{nf(cur.anomaly)} °C</span>
+                {freq !== null && <span className="chip cool">{freq.toFixed(1)} {d.hz}</span>}
+                <span className="chip">{sel.length} {d.statMonths}</span>
+              </div>
+            </div>
+          </div>
+          <PlayerTransport pb={pb} count={sel.length} current={`${mname(cur.month)} ${cur.year}`} onReset={() => setTr([])} onPause={() => setLive(`${d.paused}: ${mname(cur.month)} ${cur.year}, ${nf(cur.anomaly)} °C.`)} />
+          <p className="sr" role="status" aria-live="polite">{live}</p>
+          <p className="player-note">{d.speedNote} {d.noAudio}</p>
+
+          <div className="viz-split">
+            <div>
+              <SpiralChart rows={sel} idx={pb.idx} label={d.spiralLabel} desc={d.spiralDesc} ring="0 °C" />
+              <p className="mut" style={{ fontSize: ".8rem" }}>{d.derived}</p>
+            </div>
+            <div className="viz-side">
+              {!prefs.simple && <>
+                <LineChart rows={sel} idx={pb.idx} desc={desc} />
+                <p className="mut" style={{ fontSize: ".8rem", margin: 0 }}>{desc}</p>
+              </>}
+              <div className="wave">
+                <p className="eyebrow" style={{ marginBottom: ".5rem" }}>{d.seeSound}</p>
+                <canvas ref={pb.cv} width={1000} height={210} role="img" aria-label={d.waveLabel} />
+              </div>
+            </div>
+          </div>
+
+          {prefs.visual && freq !== null && <div aria-hidden="true">
+            <div className="bar"><div style={{ width: `${pos * 100}%` }} /></div>
+            <p className="big" style={{ marginTop: ".5rem" }}>{freq.toFixed(0)} {d.hz} · {pos < 0.34 ? d.pitchLow : pos < 0.67 ? d.pitchMid : d.pitchHigh}</p>
+          </div>}
+
+          {!prefs.simple && <Det summary={d.soundSettings}>
+            <div className="row">
+              <label>{d.year}<select value={cur.year} onChange={(e) => goTo(+e.target.value, cur.month)}>{years.map((y) => <option key={y}>{y}</option>)}</select></label>
+              <label>{d.month}<select value={cur.month} onChange={(e) => goTo(cur.year, +e.target.value)}>{Array.from({ length: 12 }, (_, i) => <option key={i} value={i + 1}>{mname(i + 1)}</option>)}</select></label>
+              <button onClick={() => pb.hearOne(pb.idx)}><Icon name="sound" size={16} /> {d.hearMonth}</button>
+            </div>
+          </Det>}
+        </div>
+      </section>}
+
+      {prefs.captions && data && cur && <section className="card" aria-labelledby="c5">
+        <p className="eyebrow">{d.catHearing}</p>
+        <h2 id="c5" style={{ marginBottom: ".6rem" }}>{d.tCaptions}</h2>
+        <p className="cap" aria-hidden="true">{evt(cur)}</p>
+        <Det summary={d.transcript}>{tr.length ? <ol className="tr">{tr.map((t, i) => <li key={i}>{t}</li>)}</ol> : <p>{d.noTranscript}</p>}</Det>
+      </section>}
 
       <section className="card" aria-labelledby="c1">
         <div className="section-head" style={{ marginBottom: "1.2rem" }}>
@@ -125,88 +204,6 @@ export default function ClimateExperience() {
         {data?.fallback && <p role="status" className="warn">{d.apiFallback}</p>}
         {data && <div className="pill-row" style={{ marginTop: "1.1rem" }}><span className="chip">{data.dataset}</span><span className="chip">{data.units}</span><span className="chip">{data.baseline}</span><span className="chip">{data.firstYear}–{data.lastYear}</span></div>}
       </section>
-
-      <section className="card" aria-labelledby="c3">
-        <div className="section-head" style={{ marginBottom: "1rem" }}>
-          <div><p className="eyebrow">{d.period}</p><h2 id="c3" style={{ margin: 0 }}>{d.s2}</h2></div>
-          {data && sel.length > 0 && <div className="row">
-            <label>{d.startYear}<input type="number" value={y1} min={all[0].year} max={y2} onChange={(e) => setY1(Math.min(Math.max(+e.target.value || all[0].year, all[0].year), y2))} /></label>
-            <label>{d.endYear}<input type="number" value={y2} min={y1} max={all[all.length - 1].year} onChange={(e) => setY2(Math.max(Math.min(+e.target.value || y2, all[all.length - 1].year), y1))} /></label>
-          </div>}
-        </div>
-        {!data && !dataErr && <p role="status">{d.loading}</p>}
-        {dataErr && <ErrBox d={d} f={dataErr} msg={d.failData} retry={() => loadData()} />}
-      </section>
-
-      {data && sel.length > 0 && cur && <section className="card" aria-labelledby="c4">
-        <h2 id="c4" className="sr">{d.s3}</h2>
-        <div className="player">
-          <div className="player-top">
-            <div className="player-readout">
-              <p className="eyebrow" style={{ margin: 0 }}>{d.s3}</p>
-              <span className="when">{mname(cur.month)} <span>{cur.year}</span></span>
-              <div className="player-chips">
-                <span className="chip warm">{cur.anomaly > 0 ? "+" : ""}{nf(cur.anomaly)} °C</span>
-                {freq !== null && <span className="chip cool">{freq.toFixed(1)} {d.hz}</span>}
-                <span className="chip">{sel.length} {d.statMonths}</span>
-              </div>
-            </div>
-            <div className="player-controls">
-              {pb.playing
-                ? <button className="pri" onClick={() => { pb.pause(); setLive(`${d.paused}: ${mname(cur.month)} ${cur.year}, ${nf(cur.anomaly)} °C.`); }}><Icon name="pause" size={16} /> {d.pause}</button>
-                : <button className="pri" onClick={() => pb.play()}><Icon name="play" size={16} /> {pb.paused() ? d.resume : d.play}</button>}
-              <button className="icon-btn" onClick={() => { pb.stop(); setTr([]); }} aria-label={d.stop} title={d.stop}><Icon name="stop" size={16} /></button>
-              <button className="icon-btn" onClick={() => { setTr([]); pb.restart(); }} aria-label={d.restart} title={d.restart}><Icon name="restart" size={16} /></button>
-              <label>{d.sonSpeed}
-                <select value={pb.speed} onChange={(e) => pb.setSpeed(+e.target.value)}>{[0.5, 0.75, 1, 1.5, 2].map((s) => <option key={s} value={s}>{s}x</option>)}</select>
-              </label>
-              <label className="vol" style={{ flex: 1 }}>{d.volume}
-                <input type="range" min={0} max={100} value={pb.vol} onChange={(e) => pb.setVol(+e.target.value)} aria-valuetext={`${pb.vol}%`} />
-              </label>
-            </div>
-          </div>
-          <p className="sr" role="status" aria-live="polite">{live}</p>
-          <progress value={pb.idx + 1} max={sel.length} aria-label={d.now} />
-          <p className="player-note">{d.speedNote} {d.noAudio}</p>
-
-          <div className="viz-split">
-            <div>
-              <SpiralChart rows={sel} idx={pb.idx} label={d.spiralLabel} desc={d.spiralDesc} ring="0 °C" />
-              <p className="mut" style={{ fontSize: ".8rem" }}>{d.derived}</p>
-            </div>
-            <div className="viz-side">
-              {!prefs.simple && <>
-                <LineChart rows={sel} idx={pb.idx} desc={desc} />
-                <p className="mut" style={{ fontSize: ".8rem", margin: 0 }}>{desc}</p>
-              </>}
-              <div className="wave">
-                <p className="eyebrow" style={{ marginBottom: ".5rem" }}>{d.seeSound}</p>
-                <canvas ref={pb.cv} width={1000} height={210} role="img" aria-label={d.waveLabel} />
-              </div>
-            </div>
-          </div>
-
-          {prefs.visual && freq !== null && <div aria-hidden="true">
-            <div className="bar"><div style={{ width: `${pos * 100}%` }} /></div>
-            <p className="big" style={{ marginTop: ".5rem" }}>{freq.toFixed(0)} {d.hz} · {pos < 0.34 ? d.pitchLow : pos < 0.67 ? d.pitchMid : d.pitchHigh}</p>
-          </div>}
-
-          {!prefs.simple && <Det summary={d.soundSettings}>
-            <div className="row">
-              <label>{d.year}<select value={cur.year} onChange={(e) => goTo(+e.target.value, cur.month)}>{years.map((y) => <option key={y}>{y}</option>)}</select></label>
-              <label>{d.month}<select value={cur.month} onChange={(e) => goTo(cur.year, +e.target.value)}>{Array.from({ length: 12 }, (_, i) => <option key={i} value={i + 1}>{mname(i + 1)}</option>)}</select></label>
-              <button onClick={() => pb.hearOne(pb.idx)}><Icon name="sound" size={16} /> {d.hearMonth}</button>
-            </div>
-          </Det>}
-        </div>
-      </section>}
-
-      {prefs.captions && data && cur && <section className="card" aria-labelledby="c5">
-        <p className="eyebrow">{d.catHearing}</p>
-        <h2 id="c5" style={{ marginBottom: ".6rem" }}>{d.tCaptions}</h2>
-        <p className="cap" aria-hidden="true">{evt(cur)}</p>
-        <Det summary={d.transcript}>{tr.length ? <ol className="tr">{tr.map((t, i) => <li key={i}>{t}</li>)}</ol> : <p>{d.noTranscript}</p>}</Det>
-      </section>}
 
       <section className="card" aria-labelledby="c6">
         <p className="eyebrow">{d.how}</p>

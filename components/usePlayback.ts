@@ -5,7 +5,8 @@ import { AudioEngine } from "../lib/audio/engine";
 
 type CB<T> = { note: (it: T, speed: number, e: AudioEngine) => void; step?: (it: T, k: number) => void; end?: () => void };
 /** Player + áudio + onda/espectro em tempo real. Callbacks lidos via ref (sem closures velhas). */
-export function usePlayback<T>(items: T[], cb: CB<T>) {
+export function usePlayback<T>(items: T[], cb: CB<T>, reducedMotion = false) {
+  const [audioError, setAudioError] = useState(false);
   const [idx, setIdx] = useState(0), [playing, setPlaying] = useState(false), [speed, setSpeed] = useState(0.5), [vol, setVol] = useState(40);
   const P = useRef<Player | null>(null), E = useRef<AudioEngine | null>(null), itemsRef = useRef(items), cbRef = useRef(cb), cv = useRef<HTMLCanvasElement>(null);
   cbRef.current = cb;
@@ -21,7 +22,7 @@ export function usePlayback<T>(items: T[], cb: CB<T>) {
   useEffect(() => { P.current?.setSpeed(speed); }, [speed]);
   useEffect(() => { E.current?.setVolume(vol / 100); }, [vol]);
   useEffect(() => {
-    const c = cv.current; if (!c) return; const g = c.getContext("2d")!; g.clearRect(0, 0, c.width, c.height); if (!playing) return; let id = 0;
+    const c = cv.current; if (!c) return; const g = c.getContext("2d")!; g.clearRect(0, 0, c.width, c.height); if (!playing || reducedMotion || window.matchMedia("(prefers-reduced-motion: reduce)").matches) return; let id = 0;
     const loop = () => {
       const a = E.current?.analyser;
       if (a) {
@@ -33,13 +34,16 @@ export function usePlayback<T>(items: T[], cb: CB<T>) {
       id = requestAnimationFrame(loop);
     };
     loop(); return () => cancelAnimationFrame(id);
-  }, [playing]);
-  const ensure = async () => { if (!E.current) E.current = new AudioEngine(); await E.current.resume(); E.current.setVolume(vol / 100); };
+  }, [playing, reducedMotion]);
+  const ensure = async () => {
+    try { if (!E.current) E.current = new AudioEngine(); await E.current.resume(); E.current.setVolume(vol / 100); setAudioError(false); return true; }
+    catch { setAudioError(true); return false; }
+  };
   return {
-    idx, setIdx, playing, speed, setSpeed, vol, setVol, cv,
-    play: async () => { await ensure(); P.current?.play(); }, pause: () => P.current?.pause(), stop: () => { P.current?.stop(); setIdx(0); },
-    restart: async () => { await ensure(); P.current?.restart(); }, seek: (k: number) => { P.current?.seek(k); setIdx(k); },
-    hearOne: async (k: number) => { await ensure(); const it = itemsRef.current[k]; if (it !== undefined && E.current) cbRef.current.note(it, 0.3, E.current); },
+    idx, setIdx, playing, audioError, speed, setSpeed, vol, setVol, cv,
+    play: async () => { if (await ensure()) P.current?.play(); }, pause: () => P.current?.pause(), stop: () => { P.current?.stop(); setIdx(0); },
+    restart: async () => { if (await ensure()) P.current?.restart(); }, seek: (k: number) => { const index = Math.max(0, Math.min(itemsRef.current.length - 1, k)); P.current?.seek(index); setIdx(index); },
+    hearOne: async (k: number) => { if (!(await ensure())) return; const it = itemsRef.current[k]; if (it !== undefined && E.current) cbRef.current.note(it, 0.3, E.current); },
     paused: () => !playing && idx > 0 && idx < items.length - 1,
   };
 }

@@ -22,3 +22,9 @@ Branch de entrega: `feat/nasa-discover-earth`, renomeada a pedido do usuário pa
 - `npm run build`: compilação de produção, checagem de tipos e geração de páginas aprovadas em cópia isolada para evitar concorrência com o servidor de desenvolvimento.
 - Chrome/Playwright: 37 eventos reais carregados na consulta de teste, imagem EPIC carregada, busca sem resultados e troca EN/PT funcionando; viewport de 390 px sem transbordamento horizontal e nenhum erro JavaScript de página observado.
 - FIRMS: contrato testado com respostas sintéticas. Consulta autenticada real pendente de configurar `FIRMS_MAP_KEY`.
+
+## Evolução das experiências
+
+Pedido posterior: melhorar as experiências. Catálogo com identidade visual por tema e guia de escuta; estúdios com acesso direto ao player, navegação por registro, linha do tempo operável por teclado e duração aproximada. Clima com atalhos de período e resumo da seleção. Queimadas com orientação inicial e acesso à configuração da chave. Player informa falha de áudio e respeita movimento reduzido na animação do canvas. Dados, status científicos e mapeamentos sonoros foram preservados.
+
+Verificação: `npm test`, checagem TypeScript e build de produção aprovados. Chrome/Playwright verificou catálogo, série climática local real, atalhos, navegação por teclado, reprodução/pausa/parada, velocidade, movimento reduzido, layout de 390 px, aviso de chave FIRMS e erro de áudio. O player de queimadas foi exercitado com resposta sintética apenas no teste; nenhuma medição fictícia foi adicionada ao produto.

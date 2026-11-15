@@ -73,7 +73,7 @@ export default function SpiralChart({ rows, idx, label, desc, ring }: { rows: Ro
       </svg>
       <div className="chart-legend" aria-hidden="true">
         <span><i /> {rows[k].month.toString().padStart(2, "0")}/{rows[k].year}</span>
-        <span style={{ color: "var(--go)" }}><i style={{ background: "var(--go)" }} /> {ring}</span>
+        {zeroR !== null && <span style={{ color: "var(--go)" }}><i style={{ background: "var(--go)" }} /> {ring}</span>}
       </div>
     </div>
   );
