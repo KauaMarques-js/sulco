@@ -13,7 +13,6 @@ export default function Header() {
   useEffect(() => { setOpen(false); }, [path]);
   const items: [string, string][] = [
     ["/", d.navHome],
-    ["/discover", d.navDiscover],
     ["/experiences", d.navExp],
     ["/data", d.navData],
     ["/about", d.navAbout],
