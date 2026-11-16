@@ -552,6 +552,12 @@ details > summary::before { content: "＋"; font-family: var(--font-mono); color
 details[open] > summary::before { content: "−"; }
 details > summary:hover { color: var(--tx); }
 details[open] > summary { color: var(--tx); }
+.share-qr { margin-top: 2rem; }
+.share-qr-content { display: flex; flex-wrap: wrap; align-items: center; gap: 1.5rem; padding-top: 1rem; }
+.share-qr-content > img { display: block; width: min(100%, 240px); height: auto; flex: none; background: #fff; border-radius: 0; }
+.share-qr-content > div { flex: 1 1 16rem; min-width: 0; overflow-wrap: anywhere; }
+.share-qr-actions { display: flex; flex-wrap: wrap; gap: .75rem; }
+.share-qr-actions .btn { max-width: 100%; white-space: normal; text-align: center; }
 .cap { min-height: 3em; font-size: 1rem; color: var(--tx-soft); }
 .tr { max-height: 200px; overflow: auto; margin: 0; padding-left: 1.2rem; font-size: 0.85rem; color: var(--mut); }
 .tr li { margin-bottom: 0.3rem; }

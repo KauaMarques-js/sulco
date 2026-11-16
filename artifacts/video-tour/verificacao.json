@@ -1,0 +1,90 @@
+{
+  "durationSeconds": 204.168,
+  "chapters": [
+    {
+      "title": "01 · Bem-vindo ao SULCO",
+      "start": 0,
+      "end": 10.811
+    },
+    {
+      "title": "02 · Ouça uma amostra",
+      "start": 10.811,
+      "end": 20.721
+    },
+    {
+      "title": "03 · Escolha sua experiência",
+      "start": 20.722,
+      "end": 31.602
+    },
+    {
+      "title": "04 · Clima: escolha o período",
+      "start": 31.602,
+      "end": 41.683
+    },
+    {
+      "title": "05 · Clima: reprodução e navegação",
+      "start": 41.683,
+      "end": 57.603
+    },
+    {
+      "title": "06 · Visualização e explicações",
+      "start": 57.603,
+      "end": 71.995
+    },
+    {
+      "title": "07 · Incêndios: consulte os satélites",
+      "start": 71.995,
+      "end": 84.845
+    },
+    {
+      "title": "08 · Incêndios: som, gráfico e mapa",
+      "start": 84.845,
+      "end": 96.945
+    },
+    {
+      "title": "09 · Oceanos: região e intervalo",
+      "start": 96.945,
+      "end": 110.126
+    },
+    {
+      "title": "10 · Oceanos: ouça cada dia",
+      "start": 110.126,
+      "end": 122.107
+    },
+    {
+      "title": "11 · Explore e baixe os dados",
+      "start": 122.107,
+      "end": 135.067
+    },
+    {
+      "title": "12 · Dados de incêndios e oceanos",
+      "start": 135.067,
+      "end": 148.207
+    },
+    {
+      "title": "13 · Ajuste a leitura e a navegação",
+      "start": 148.207,
+      "end": 163.807
+    },
+    {
+      "title": "14 · Texto, som visual e Libras",
+      "start": 163.807,
+      "end": 176.708
+    },
+    {
+      "title": "15 · Idiomas e tela pequena",
+      "start": 176.708,
+      "end": 190.367
+    },
+    {
+      "title": "16 · Conheça a equipe",
+      "start": 190.367,
+      "end": 204.168
+    }
+  ],
+  "javascriptErrors": [],
+  "downloads": [
+    "gistemp_selected.csv"
+  ],
+  "audio": "Narração em português e sons capturados das experiências."
+}

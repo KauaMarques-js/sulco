@@ -1,0 +1,136 @@
+1
+00:00:00,000 --> 00:00:05,995
+Este é o SULCO, um projeto criado para o hackathon NASA Space Apps Challenge.
+
+2
+00:00:05,995 --> 00:00:09,810
+Aqui, dados da Terra viram som, gráficos e texto.
+
+3
+00:00:10,811 --> 00:00:16,467
+Na página inicial, a reprodução apresenta uma amostra da série climática.
+
+4
+00:00:16,467 --> 00:00:19,721
+O som só começa quando você escolhe ouvir.
+
+5
+00:00:20,722 --> 00:00:25,333
+Em Experiências, você escolhe entre clima, incêndios e oceanos.
+
+6
+00:00:25,333 --> 00:00:30,602
+Cada opção apresenta a fonte dos dados e o que será transformado em som.
+
+7
+00:00:31,602 --> 00:00:35,757
+Na espiral climática, cada mês corresponde a uma nota.
+
+8
+00:00:35,757 --> 00:00:40,682
+Podemos explorar toda a série ou selecionar os últimos dez anos.
+
+9
+00:00:41,683 --> 00:00:45,876
+Ao tocar, a nota acompanha a anomalia de temperatura.
+
+10
+00:00:45,876 --> 00:00:52,127
+Os controles permitem pausar, retomar, mudar a velocidade e navegar pela série.
+
+11
+00:00:52,127 --> 00:00:55,133
+Gráficos e texto acompanham a seleção.
+
+12
+00:00:57,603 --> 00:01:06,011
+A experiência também reúne a visualização da NASA, explicações do mapeamento sonoro,
+legendas e transcrição.
+
+13
+00:01:06,011 --> 00:01:10,993
+Assim, a informação pode ser acompanhada de diferentes maneiras.
+
+14
+00:01:11,995 --> 00:01:17,634
+Em Incêndios, escolhemos a área, os satélites e a quantidade de dias.
+
+15
+00:01:17,634 --> 00:01:23,845
+A consulta usa dados reais do NASA FIRMS e informa a última data disponível.
+
+16
+00:01:24,845 --> 00:01:28,006
+As detecções aparecem no gráfico e no mapa.
+
+17
+00:01:28,006 --> 00:01:35,945
+A reprodução transforma os registros em pulsos, enquanto os valores e a tabela ajudam a
+acompanhar cada dia.
+
+18
+00:01:36,945 --> 00:01:44,500
+Em Oceanos, a visualização da NASA acompanha os dados de temperatura da superfície do
+mar da NOAA.
+
+19
+00:01:44,500 --> 00:01:49,125
+Podemos escolher a bacia oceânica e o intervalo da consulta.
+
+20
+00:01:50,126 --> 00:01:56,102
+O estúdio dos oceanos permite ouvir a sequência ou selecionar um dia específico.
+
+21
+00:01:56,102 --> 00:02:01,106
+A temperatura aparece em números, no gráfico e na descrição do som.
+
+22
+00:02:02,107 --> 00:02:08,008
+No Explorador de dados, você consulta os números por trás das experiências.
+
+23
+00:02:08,008 --> 00:02:14,067
+No clima, é possível abrir a tabela e baixar os dados do período selecionado.
+
+24
+00:02:15,067 --> 00:02:19,801
+O explorador também reúne as consultas de incêndios e oceanos.
+
+25
+00:02:19,801 --> 00:02:27,207
+As fontes, as datas e os valores ficam disponíveis junto dos controles de cada conjunto
+de dados.
+
+26
+00:02:28,207 --> 00:02:34,366
+O painel de acessibilidade oferece texto maior, alto contraste e menos movimento.
+
+27
+00:02:34,366 --> 00:02:42,807
+Também é possível ampliar os botões, destacar o foco e escolher anúncios mais detalhados
+para leitores de tela.
+
+28
+00:02:43,807 --> 00:02:50,410
+Legendas, transcrição e som visual oferecem outras formas de acompanhar a experiência.
+
+29
+00:02:50,410 --> 00:02:55,707
+Em português, o painel permite ativar o VLibras para apoio em Libras.
+
+30
+00:02:56,708 --> 00:03:00,418
+A interface está disponível em português e inglês.
+
+31
+00:03:00,418 --> 00:03:06,798
+Em telas menores, o menu reúne os mesmos caminhos para continuar explorando o projeto.
+
+32
+00:03:10,367 --> 00:03:16,729
+Na página Sobre, você encontra a proposta do SULCO, a equipe e as fontes utilizadas.
+
+33
+00:03:16,729 --> 00:03:23,167
+Esse é o fluxo do projeto: escolher, ouvir e explorar os dados da Terra no seu ritmo.

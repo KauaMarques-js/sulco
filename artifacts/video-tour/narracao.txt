@@ -1,0 +1,31 @@
+Este é o SULCO, um projeto criado para o hackathon NASA Space Apps Challenge. Aqui, dados da Terra viram som, gráficos e texto.
+
+Na página inicial, a reprodução apresenta uma amostra da série climática. O som só começa quando você escolhe ouvir.
+
+Em Experiências, você escolhe entre clima, incêndios e oceanos. Cada opção apresenta a fonte dos dados e o que será transformado em som.
+
+Na espiral climática, cada mês corresponde a uma nota. Podemos explorar toda a série ou selecionar os últimos dez anos.
+
+Ao tocar, a nota acompanha a anomalia de temperatura. Os controles permitem pausar, retomar, mudar a velocidade e navegar pela série. Gráficos e texto acompanham a seleção.
+
+A experiência também reúne a visualização da NASA, explicações do mapeamento sonoro, legendas e transcrição. Assim, a informação pode ser acompanhada de diferentes maneiras.
+
+Em Incêndios, escolhemos a área, os satélites e a quantidade de dias. A consulta usa dados reais do NASA FIRMS e informa a última data disponível.
+
+As detecções aparecem no gráfico e no mapa. A reprodução transforma os registros em pulsos, enquanto os valores e a tabela ajudam a acompanhar cada dia.
+
+Em Oceanos, a visualização da NASA acompanha os dados de temperatura da superfície do mar da NOAA. Podemos escolher a bacia oceânica e o intervalo da consulta.
+
+O estúdio dos oceanos permite ouvir a sequência ou selecionar um dia específico. A temperatura aparece em números, no gráfico e na descrição do som.
+
+No Explorador de dados, você consulta os números por trás das experiências. No clima, é possível abrir a tabela e baixar os dados do período selecionado.
+
+O explorador também reúne as consultas de incêndios e oceanos. As fontes, as datas e os valores ficam disponíveis junto dos controles de cada conjunto de dados.
+
+O painel de acessibilidade oferece texto maior, alto contraste e menos movimento. Também é possível ampliar os botões, destacar o foco e escolher anúncios mais detalhados para leitores de tela.
+
+Legendas, transcrição e som visual oferecem outras formas de acompanhar a experiência. Em português, o painel permite ativar o VLibras para apoio em Libras.
+
+A interface está disponível em português e inglês. Em telas menores, o menu reúne os mesmos caminhos para continuar explorando o projeto.
+
+Na página Sobre, você encontra a proposta do SULCO, a equipe e as fontes utilizadas. Esse é o fluxo do projeto: escolher, ouvir e explorar os dados da Terra no seu ritmo.

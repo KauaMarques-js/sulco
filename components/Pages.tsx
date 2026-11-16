@@ -221,7 +221,8 @@ export function Experiences() {
 }
 
 export function About() {
-  const { d } = useApp();
+  const { d, lang } = useApp();
+  const pt = lang === "pt-BR";
   return (
     <>
       <article>
@@ -300,6 +301,20 @@ export function About() {
             NASA Scientific Visualization Studio · NASA GISS · NASA FIRMS · NOAA CoastWatch.
           </p>
         </section>
+        <details className="share-qr card">
+          <summary>{pt ? "Compartilhar o SULCO · QR code" : "Share SULCO · QR code"}</summary>
+          <div className="share-qr-content">
+            <img src="/share/sulco-qr.png" width={984} height={984} loading="lazy" alt={pt ? "QR code para acessar o site SULCO" : "QR code to visit the SULCO website"} />
+            <div>
+              <p>{pt ? "Escaneie para abrir o site ou baixe a imagem para usar em apresentações." : "Scan to open the website, or download the image for presentations."}</p>
+              <p><a href="https://sulcoo.vercel.app">sulcoo.vercel.app</a></p>
+              <div className="share-qr-actions">
+                <a className="btn" href="/share/sulco-qr.png" download="sulco-qr.png">{pt ? "Baixar imagem PNG" : "Download PNG image"}</a>
+                <a className="btn ghost" href="/share/sulco-qr.svg" download="sulco-qr.svg">{pt ? "Baixar SVG para impressão" : "Download SVG for print"}</a>
+              </div>
+            </div>
+          </div>
+        </details>
       </article>
     </>
   );

@@ -1,0 +1,40 @@
+1
+00:00:00,000 --> 00:00:03,000
+Numbers don't always
+make change clear.
+
+2
+00:00:03,000 --> 00:00:09,000
+SULCO turns real NASA and NOAA data
+into sound you can explore.
+
+3
+00:00:09,000 --> 00:00:12,200
+Compare periods on
+the same sound scale.
+
+4
+00:00:12,200 --> 00:00:13,400
+[Period A]
+
+5
+00:00:13,400 --> 00:00:15,000
+[Period B]
+
+6
+00:00:15,000 --> 00:00:19,000
+Explore wildfires and oceans, too.
+
+7
+00:00:19,000 --> 00:00:23,500
+More ways to access Earth science,
+including without sight.
+
+8
+00:00:23,500 --> 00:00:27,500
+Keyboard controls, text,
+and high contrast.
+
+9
+00:00:27,500 --> 00:00:30,000
+SULCO. Hear the difference.
