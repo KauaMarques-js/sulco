@@ -24,6 +24,25 @@ try {
     assert.equal((await oceans(new Request("http://localhost/api/nasa/oceans?" + query))).status, 400);
   }
 
+  let oceanCalls = 0;
+  globalThis.fetch = async (url) => {
+    if (String(url).includes("/info/")) return Response.json({ table: { rows: [["attribute", "NC_GLOBAL", "time_coverage_end", "String", "2026-11-16T12:00:00Z"]] } });
+    oceanCalls++;
+    const match = String(url).match(/analysed_sst\[\(([^)]+)\):1:\(([^)]+)\)\]/)!;
+    const start = Date.parse(match[1]), end = Date.parse(match[2]);
+    assert.ok(end - start <= 6 * 864e5, "Each request spans at most seven days");
+    const rows: string[] = [];
+    for (let time = start; time <= end; time += 864e5) rows.push(`${new Date(time).toISOString()},-10,-30,25`);
+    return new Response("time,latitude,longitude,analysed_sst\nUTC,degrees_north,degrees_east,degree_C\n" + rows.join("\n"));
+  };
+  r = await oceans(new Request("http://localhost/api/nasa/oceans?days=30")); d = await r.json();
+  assert.equal(r.status, 200); assert.equal(oceanCalls, 5); assert.equal(d.days.length, 30);
+  assert.equal(d.samples, 30); assert.equal(d.start, "2026-10-18"); assert.equal(d.end, "2026-11-16");
+  assert.equal(new Set(d.days.map((day: { date: string }) => day.date)).size, 30);
+  globalThis.fetch = async () => new Response("<html>unavailable</html>");
+  r = await oceans(new Request("http://localhost/api/nasa/oceans?basin=br&days=30"));
+  assert.equal(r.status, 502, "A failed weekly request must not become a partial successful series");
+
   delete process.env.FIRMS_MAP_KEY;
   r = await availability(); assert.equal(r.status, 503);
   process.env.FIRMS_MAP_KEY = "synthetic-test-key";

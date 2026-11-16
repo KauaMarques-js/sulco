@@ -38,3 +38,11 @@ Corrigida a apresentação de metadados SVS: inventário de downloads separado p
 ## Publicação na main
 
 A pedido do usuário, integrada a branch `feat/nasa-discover-earth` à main atualizada de `9733712`. Preservadas as otimizações de geometria dos gráficos, buffers e limite de 30 fps do player, junto com seleção por teclado e mouse, tratamento de falha de áudio e metadados SVS legíveis. `npm test`, build de produção e checagem no navegador da integração aprovados (clima, queimadas, oceanos, layout móvel e ausência de erros JavaScript de página).
+
+## Correções locais de conectividade NASA — 2026-11-16
+
+- Reproduzido 502 no SVS por `UNABLE_TO_VERIFY_LEAF_SIGNATURE`: o servidor omite os intermediários YR2 e Root YR. Recuperação restrita aos hosts SVS fornece os certificados públicos oficiais da Let's Encrypt e mantém validação de raiz, hostname e validade. O YR2 vence em 2028-09-02; remover a compatibilidade quando o SVS passar a fornecer a cadeia completa.
+- Imagens e vídeos de clima/oceanos usam o proxy local com HTTPS, streaming e suporte a `Range`/206/416. Testadas consultas reais aos três metadados SVS e aos arquivos de mídia, incluindo bytes do final do vídeo de oceanos.
+- Reproduzido timeout na consulta NOAA de 30 dias. Busca dividida em semanas sem sobreposição, com duas requisições simultâneas e a mesma amostragem espacial. Consulta real retornou 30 dias e 1.230 medições; falhas não são convertidas em séries parciais.
+- Testes de transporte verificam cadeia criptográfica, recuperação limitada ao erro/host correto, rejeição de hosts e conteúdo indevidos e intervalos de bytes. Suíte executada com Node 24.22.1: o Node 23.11.0 local apresentou falha interna do libuv durante a execução original. Acesso automatizado ao navegador indisponível nesta sessão; nenhuma validação visual alegada.
+- Carregamento de oceanos: consulta local global/30 dias observada em 19,9 s. Removidas três mensagens genéricas repetidas: os controles apresentam um único status NOAA, aviso de demora após 8 s e erro recuperável após 45 s. Trocas de filtro cancelam a consulta anterior; timeout não deixa o botão bloqueado. Hook e renderização dos controles verificados em harness React temporário, incluindo sucesso, demora, timeout, nova tentativa e cancelamento; TypeScript aprovado.

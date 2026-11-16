@@ -144,8 +144,7 @@ export default function DataExplorer() {
           {o.data && <span className="badge is-ok">{d.available}</span>}
         </div>
         <OceansControls o={o} />
-        {o.busy && !o.data && <p role="status">{d.loading}</p>}
-        {o.err && <ErrBox d={d} f={o.err} msg={d.oFailData} retry={o.load} />}
+        {o.err && <ErrBox d={d} f={o.err} msg={o.err.timeout ? d.oTimeout : d.oFailData} retry={o.load} />}
         {o.data && <div className="pill-row">
           <span className="chip">{d.fCollected}: {new Date(o.data.collectedAt).toLocaleString(lang)}</span>
           <span className="chip">{o.data.dataset}</span>

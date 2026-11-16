@@ -16,7 +16,6 @@ import { Icon } from "./Icons";
 
 type Meta = { creditGroups?: CreditGroup[]; id: number; page: string; title: string | null; description: string | null; credits: string | null; video: string | null; image: string | null };
 const strip = (s: string | null) => (s ?? "").replace(/<[^>]+>/g, "");
-const protoRelative = (u: string) => u.replace(/^https?:/i, "");
 const proxied = (u: string) => `/api/nasa/media?u=${encodeURIComponent(u)}`;
 
 export default function ClimateExperience() {
@@ -199,7 +198,7 @@ export default function ClimateExperience() {
                 preload="none"
                 playsInline
                 poster={meta.image ? proxied(meta.image) : undefined}
-                src={protoRelative(meta.video)}
+                src={proxied(meta.video)}
                 aria-label={meta.title ?? d.expTitles.climate}
                 onError={() => setMediaErr(true)}
                 onLoadedMetadata={() => { if (video.current) video.current.playbackRate = vspeed; }}

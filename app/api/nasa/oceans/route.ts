@@ -1,5 +1,6 @@
 import { fetchData, errorBody, SourceError } from "../../../../lib/nasa/fetchText.ts";
 import { OCEAN_BASINS, OCEAN_DAYS, parseErddapSstCsv, aggregateDailySst, type BasinDef } from "../../../../lib/oceans.ts";
+import { mapConcurrent } from "../../../../lib/nasa/parallel.ts";
 export const revalidate = 3600;
 
 export async function GET(req: Request) {
@@ -25,15 +26,22 @@ export async function GET(req: Request) {
     const endIso = info.data, endMs = Date.parse(endIso);
 
     const startMs = endMs - (daysParam - 1) * 864e5;
-    const startIso = `${new Date(startMs).toISOString().slice(0, 10)}T12:00:00Z`;
-    const csvUrl = `https://coastwatch.noaa.gov/erddap/griddap/noaacwBLENDEDCsstDaily.csv?analysed_sst[(${startIso}):1:(${endIso})]${basin.erddapBox}`;
-
-    const csv = await fetchData(csvUrl, "text/csv", 3600, (body) => {
-      const parsed = parseErddapSstCsv(body);
-      if (!parsed.rows.length) throw new SourceError("Sem medições válidas de SST no recorte selecionado");
-      return parsed;
+    // ERDDAP can time out on a single 30-day request, even with a coarse grid.
+    // Disjoint weekly chunks preserve every requested day and the spatial sampling.
+    const windows: { start: string; end: string }[] = [];
+    for (let offset = 0; offset < daysParam; offset += 7) {
+      windows.push({
+        start: new Date(startMs + offset * 864e5).toISOString(),
+        end: new Date(Math.min(startMs + (offset + 6) * 864e5, endMs)).toISOString(),
+      });
+    }
+    const chunks = await mapConcurrent(windows, 2, async (window) => {
+      const csvUrl = `https://coastwatch.noaa.gov/erddap/griddap/noaacwBLENDEDCsstDaily.csv?analysed_sst[(${window.start}):1:(${window.end})]${basin.erddapBox}`;
+      return fetchData(csvUrl, "text/csv", 3600, parseErddapSstCsv);
     });
-    const { rows, skipped } = csv.data;
+    const rows = chunks.flatMap((chunk) => chunk.data.rows);
+    const skipped = chunks.reduce((sum, chunk) => sum + chunk.data.skipped, 0);
+    if (!rows.length) throw new SourceError("Sem medições válidas de SST no recorte selecionado");
     const days = aggregateDailySst(rows);
 
     return Response.json({
@@ -45,7 +53,7 @@ export async function GET(req: Request) {
       gridStepDeg: basin.gridStepDeg,
       start: days[0].date,
       end: days[days.length - 1].date,
-      collectedAt: csv.fetchedAt,
+      collectedAt: chunks.map((chunk) => chunk.fetchedAt).sort()[0],
       samples: rows.length,
       skipped,
       days,

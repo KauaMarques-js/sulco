@@ -135,7 +135,7 @@ export default function OceansExperience() {
             {httpsVideo ? (
               <video
                 ref={vidRef}
-                src={httpsVideo}
+                src={`/api/nasa/media?u=${encodeURIComponent(httpsVideo)}`}
                 poster={proxyImg ?? undefined}
                 controls
                 playsInline
@@ -182,8 +182,7 @@ export default function OceansExperience() {
 
         <OceansControls o={o} />
 
-        {o.busy && !o.data && <p role="status">{d.loading}</p>}
-        {o.err && <ErrBox d={d} f={o.err} msg={d.oFailData} retry={o.load} />}
+        {o.err && <ErrBox d={d} f={o.err} msg={o.err.timeout ? d.oTimeout : d.oFailData} retry={o.load} />}
 
         {o.data && (
           <>

@@ -1,3 +1,5 @@
+import { fetchSource } from "./fetchSource.ts";
+
 export class SourceError extends Error {
   info: { status?: number; contentType?: string; snippet?: string };
   constructor(msg: string, info: SourceError["info"] = {}) { super(msg); this.info = info; }
@@ -9,7 +11,7 @@ async function requestText(url: string, accept: string) {
   let last: unknown;
   for (let attempt = 1; attempt <= 2; attempt++) {
     try {
-      const r = await fetch(url, {
+      const r = await fetchSource(url, {
         signal: AbortSignal.timeout(15000),
         headers: { "User-Agent": "SULCO/1.0 (NASA Space Apps; public data)", Accept: accept },
         // Only the validated application cache may retain upstream responses.

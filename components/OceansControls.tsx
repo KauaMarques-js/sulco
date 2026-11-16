@@ -22,8 +22,9 @@ export function useOceans(enabled = true) {
   const [basin, setBasinState] = useState<BasinDef["id"]>("global");
   const [days, setDaysState] = useState<(typeof OCEAN_DAYS)[number]>(30);
   const [data, setData] = useState<OceansPayload | null>(null);
-  const [err, setErr] = useState<Fail | null>(null);
+  const [err, setErr] = useState<(Fail & { timeout?: boolean }) | null>(null);
   const [busy, setBusy] = useState(false);
+  const [slow, setSlow] = useState(false);
   const reqRef = useRef(0);
   const abortRef = useRef<AbortController | null>(null);
 
@@ -31,12 +32,15 @@ export function useOceans(enabled = true) {
     const id = ++reqRef.current;
     abortRef.current?.abort();
     const controller = new AbortController(); abortRef.current = controller;
+    const deadline = AbortSignal.timeout(45000);
+    const slowTimer = setTimeout(() => { if (reqRef.current === id) setSlow(true); }, 8000);
     setBusy(true);
+    setSlow(false);
     setErr(null);
-    getJson<OceansPayload>(`/api/nasa/oceans?basin=${encodeURIComponent(b)}&days=${w}`, { signal: controller.signal })
-      .then((res) => { if (reqRef.current === id) setData(res); })
-      .catch((e) => { if (reqRef.current === id && !controller.signal.aborted) { setData(null); setErr(e); } })
-      .finally(() => { if (reqRef.current === id) setBusy(false); });
+    getJson<OceansPayload>(`/api/nasa/oceans?basin=${encodeURIComponent(b)}&days=${w}`, { signal: AbortSignal.any([controller.signal, deadline]) })
+      .then((res) => { if (reqRef.current === id && !controller.signal.aborted) setData(res); })
+      .catch((e) => { if (reqRef.current === id && !controller.signal.aborted) { setData(null); setErr(deadline.aborted ? { source: "NOAA CoastWatch", timeout: true } : e); } })
+      .finally(() => { clearTimeout(slowTimer); if (reqRef.current === id) { setBusy(false); setSlow(false); } });
   }, []);
 
   useEffect(() => { if (enabled) load(basin, days); return () => abortRef.current?.abort(); }, [load, enabled, basin, days]);
@@ -45,14 +49,14 @@ export function useOceans(enabled = true) {
   const setDays = (w: (typeof OCEAN_DAYS)[number]) => { setDaysState(w); };
   const reload = () => load(basin, days);
 
-  return { basin, setBasin, days, setDays, data, err, busy, load: reload };
+  return { basin, setBasin, days, setDays, data, err, busy, slow, load: reload };
 }
 
 export default function OceansControls({ o }: { o: ReturnType<typeof useOceans> }) {
   const { d } = useApp();
   return (
-    <div aria-busy={o.busy}>
-    <div className="row" style={{ margin: "1rem 0" }}>
+    <div>
+    <div className="row" aria-busy={o.busy} style={{ margin: "1rem 0" }}>
       <label>
         {d.oBasin}
         <select value={o.basin} onChange={(e) => o.setBasin(e.target.value as BasinDef["id"])}>
@@ -71,10 +75,10 @@ export default function OceansControls({ o }: { o: ReturnType<typeof useOceans> 
       </div>
 
       <button type="button" onClick={o.load} disabled={o.busy}>
-        {o.busy ? d.loading : d.oLoad}
+        {d.oLoad}
       </button>
     </div>
-    <p role="status" className="swh">{o.busy ? d.loading : ""}</p>
+    <p role="status" className="swh" aria-atomic="true">{o.busy ? (o.slow ? d.oLoadingSlow : d.oLoading) : ""}</p>
     </div>
   );
 }
